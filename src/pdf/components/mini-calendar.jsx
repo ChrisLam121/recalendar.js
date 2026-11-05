@@ -5,7 +5,12 @@ import React from 'react';
 import { withTranslation } from 'react-i18next';
 
 import { getWeekdays, getWeekendDays, getWeekNumber } from '~/lib/date';
-import { findByDate, isEvent, isHoliday, DATE_FORMAT as SPECIAL_DATES_DATE_FORMAT } from '~/lib/special-dates-utils';
+import {
+  findByDate,
+  isEvent,
+  isHoliday,
+  EXACT_DATE_FORMAT as SPECIAL_DATES_DATE_FORMAT,
+} from '~/lib/special-dates-utils';
 import PdfConfig from '~/pdf/config';
 import {
   dayPageLink,

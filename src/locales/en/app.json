@@ -230,10 +230,12 @@
     "special-dates": {
       "title": "Special dates",
       "description": "Add your birthdays, celebrations, events, etc. here to get reminders about them in weekly overviews and day pages as they approach.",
+      "date-scope": "Dates with a year apply only to that date. Dates without a year repeat every year. To replace holidays from an older PDF, remove all holidays and import the .ics file again; your other events and settings are kept.",
       "empty": "No dates",
       "placeholder": "What's the occasion?",
       "manual": {
-        "heading": "Add a date manually"
+        "heading": "Add a date manually",
+        "repeat-yearly": "Repeat every year (for birthdays and anniversaries)"
       },
       "holidays": {
         "heading": "Import national holidays",
@@ -273,7 +275,8 @@
       },
       "button": {
         "item": "Add date",
-        "remove": "Remove"
+        "remove": "Remove",
+        "clear-holidays": "Remove all holidays"
       }
     },
     "generation-description": "PDF generation is done entirely in your browser - no data is sent to our servers!"

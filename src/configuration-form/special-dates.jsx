@@ -1,5 +1,4 @@
 import dayjs from 'dayjs/esm';
-import ICAL from 'ical.js';
 import PropTypes from 'prop-types';
 import React from 'react';
 import Accordion from 'react-bootstrap/Accordion';
@@ -16,10 +15,13 @@ import Tooltip from 'react-bootstrap/Tooltip';
 import { Trans, withTranslation } from 'react-i18next';
 
 import { fetchCountries, fetchHolidays } from '~/lib/holidays-api';
+import { importIcalDates } from '~/lib/ical-import';
 import {
   DATE_FORMAT,
   EVENT_DAY_TYPE,
+  EXACT_DATE_FORMAT,
   formatYearRange,
+  getDateRange,
   getDedupeKey,
   getSpannedYears,
   HOLIDAY_DAY_TYPE,
@@ -34,14 +36,12 @@ const STATUS_YEAR_UNAVAILABLE = 'YEAR_UNAVAILABLE';
 const ENGLISH_NAME = 'name';
 const LOCAL_NAME = 'local_name';
 
-// Disable strict mode for ical.js to allow slightly invalid ics files.
-ICAL.design.strict = false;
-
 class SpecialDates extends React.PureComponent {
   state = {
     date: '',
     value: '',
     type: EVENT_DAY_TYPE,
+    repeatYearly: false,
     icalType: EVENT_DAY_TYPE,
     status: STATUS_EMPTY,
     countries: [],
@@ -105,11 +105,15 @@ class SpecialDates extends React.PureComponent {
     this.setState({ holidaysStatus: STATUS_LOADING });
     try {
       const holidayLists = await Promise.all(targetYears.map((y) => fetchHolidays(selectedCountry, y)));
+      const { start, end } = getDateRange(this.props);
       const seen = new Set(this.props.items.map(getDedupeKey));
       let added = 0;
       let skipped = 0;
       holidayLists.flat().forEach((holiday) => {
-        const date = holiday.date.slice(5);
+        const date = holiday.date;
+        if (date < start || date >= end) {
+          return;
+        }
         const holidayName = holiday.name;
         const value = nameLanguage === LOCAL_NAME ? holiday.local_name || holiday.name : holiday.name;
         const key = getDedupeKey({ date, holidayName });
@@ -139,7 +143,7 @@ class SpecialDates extends React.PureComponent {
 
   onAddClick = () => {
     const date = dayjs(this.state.date, 'YYYY-MM-DD');
-    const key = date.format(DATE_FORMAT);
+    const key = date.format(this.state.repeatYearly ? DATE_FORMAT : EXACT_DATE_FORMAT);
     const { value, type } = this.state;
     this.props.onAdd({ date: key, value, type });
     this.setState({ date: '', value: '' });
@@ -147,30 +151,8 @@ class SpecialDates extends React.PureComponent {
 
   onFileLoad = (event) => {
     try {
-      const jcalData = ICAL.parse(event.target.result);
-      const vcalendar = new ICAL.Component(jcalData);
-      const vevents = vcalendar.getAllSubcomponents('vevent');
-      vevents.forEach((vevent) => {
-        const ev = new ICAL.Event(vevent);
-        const startDate = dayjs(ev.startDate.toJSDate());
-        const value = ev.summary;
-        if (ev.isRecurring()) {
-          const iter = ev.iterator();
-          for (let next = iter.next(); next; next = iter.next()) {
-            if (next.year < this.props.year) {
-              continue;
-            } else if (next.year > this.props.year) {
-              break;
-            }
-            const date = dayjs(next.toJSDate());
-            const key = date.format(DATE_FORMAT);
-            this.props.onAdd({ date: key, value, type: this.state.icalType });
-          }
-        } else if (startDate.year() === this.props.year) {
-          const key = startDate.format(DATE_FORMAT);
-          this.props.onAdd({ date: key, value, type: this.state.icalType });
-        }
-      });
+      const items = importIcalDates(event.target.result, this.props, this.state.icalType, this.props.items);
+      items.forEach(this.props.onAdd);
 
       this.setState({
         status: STATUS_SUCCESS,
@@ -208,11 +190,12 @@ class SpecialDates extends React.PureComponent {
     const ItemGroup = (key) => {
       const { t } = this.props;
       const items = groupedItems[key];
-      const date = dayjs(key, DATE_FORMAT);
+      const isAnnual = key.length === DATE_FORMAT.length;
+      const date = dayjs(key, isAnnual ? DATE_FORMAT : EXACT_DATE_FORMAT);
       return (
         <ListGroup.Item key={key}>
           <Stack direction="horizontal" gap={3}>
-            <b className="special-date">{date.format('MMMM DD')}</b>
+            <b className="special-date">{date.format(isAnnual ? 'MMMM DD' : 'MMMM DD, YYYY')}</b>
             <ListGroup variant="flush" className="w-100">
               {items.map(({ id, value, type }) => (
                 <ListGroup.Item key={id} className="ps-0 pe-0">
@@ -456,6 +439,12 @@ class SpecialDates extends React.PureComponent {
         </Accordion.Header>
         <Accordion.Body>
           <p>{t('configuration.special-dates.description')}</p>
+          <p className="text-muted small">{t('configuration.special-dates.date-scope')}</p>
+          {this.props.items.some(({ type }) => type === HOLIDAY_DAY_TYPE) && (
+            <Button className="mb-3" variant="outline-danger" onClick={this.props.onClearHolidays}>
+              {t('configuration.special-dates.button.clear-holidays')}
+            </Button>
+          )}
           <Stack gap={2}>
             {numberOfItems > 0 ? (
               this.renderItems(groupedItems)
@@ -486,6 +475,13 @@ class SpecialDates extends React.PureComponent {
                 {t('configuration.special-dates.button.item')}
               </Button>
             </InputGroup>
+            <Form.Check
+              id="special-date-repeat-yearly"
+              className="mt-2"
+              label={t('configuration.special-dates.manual.repeat-yearly')}
+              checked={this.state.repeatYearly}
+              onChange={(event) => this.setState({ repeatYearly: event.target.checked })}
+            />
           </Stack>
           {this.renderHolidaysSection()}
           <Stack className="mt-4">
@@ -511,6 +507,7 @@ SpecialDates.propTypes = {
   items: PropTypes.array.isRequired,
   onAdd: PropTypes.func.isRequired,
   onRemove: PropTypes.func.isRequired,
+  onClearHolidays: PropTypes.func.isRequired,
   t: PropTypes.func.isRequired,
 };
 

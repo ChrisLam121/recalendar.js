@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 
 import { getPageSizeInPoints } from '~/lib/device-utils';
-import { findByDate, DATE_FORMAT as SPECIAL_DATES_DATE_FORMAT } from '~/lib/special-dates-utils';
+import { findByDate, EXACT_DATE_FORMAT as SPECIAL_DATES_DATE_FORMAT } from '~/lib/special-dates-utils';
 import Header from '~/pdf/components/header';
 import Itinerary from '~/pdf/components/itinerary';
 import MiniCalendar from '~/pdf/components/mini-calendar';

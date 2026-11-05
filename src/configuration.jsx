@@ -294,6 +294,10 @@ class Configuration extends React.PureComponent {
     this.updateList('specialDates', (items) => addItem(items, newSpecialDate));
   };
 
+  handleClearHolidays = () => {
+    this.updateList('specialDates', (items) => items.filter(({ type }) => type !== 'holiday'));
+  };
+
   getWorkerMessage(isPreview) {
     return {
       isPreview,
@@ -380,6 +384,7 @@ class Configuration extends React.PureComponent {
             items={this.state.specialDates}
             onAdd={this.handleSpecialDateAdd}
             onRemove={this.handleListRemove}
+            onClearHolidays={this.handleClearHolidays}
           />
           <ToggleSection
             id="isYearNotesEnabled"

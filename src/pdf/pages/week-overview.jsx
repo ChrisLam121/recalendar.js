@@ -6,7 +6,11 @@ import { withTranslation } from 'react-i18next';
 
 import { getWeekNumber } from '~/lib/date';
 import { getPageSizeInPoints } from '~/lib/device-utils';
-import { findByDate, HOLIDAY_DAY_TYPE, DATE_FORMAT as SPECIAL_DATES_DATE_FORMAT } from '~/lib/special-dates-utils';
+import {
+  findByDate,
+  HOLIDAY_DAY_TYPE,
+  EXACT_DATE_FORMAT as SPECIAL_DATES_DATE_FORMAT,
+} from '~/lib/special-dates-utils';
 import Header from '~/pdf/components/header';
 import MiniCalendar, { HIGHLIGHT_WEEK } from '~/pdf/components/mini-calendar';
 import PdfConfig from '~/pdf/config';

@@ -12,7 +12,7 @@ class Header extends React.PureComponent {
         flexDirection: 'row',
       },
       meta: {
-        flexGrow: 1,
+        flex: 1,
         flexDirection: 'column',
         borderRight: '1 solid black',
       },
@@ -21,7 +21,9 @@ class Header extends React.PureComponent {
         marginLeft: 'auto',
       },
       dateInfo: {
-        flex: 1,
+        flexGrow: 1,
+        flexShrink: 0,
+        width: '100%',
         flexDirection: 'row',
         paddingRight: 5,
       },

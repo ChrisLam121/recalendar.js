@@ -52,7 +52,8 @@ export const CONFIG_VERSION_1 = 'v1';
 export const CONFIG_VERSION_2 = 'v2';
 export const CONFIG_VERSION_3 = 'v3';
 export const CONFIG_VERSION_4 = 'v4';
-export const CONFIG_CURRENT_VERSION = CONFIG_VERSION_4;
+export const CONFIG_VERSION_5 = 'v5';
+export const CONFIG_CURRENT_VERSION = CONFIG_VERSION_5;
 
 export function hydrateFromObject(object) {
   return Object.fromEntries(

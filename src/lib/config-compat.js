@@ -2,7 +2,13 @@ import dayjs from 'dayjs/esm';
 
 import { SIDEBAR_LEFT, SIDEBAR_RIGHT } from '~/lib/sidebar-utils';
 import { EVENT_DAY_TYPE, DATE_FORMAT as SPECIAL_DATES_DATE_FORMAT } from '~/lib/special-dates-utils';
-import { CONFIG_CURRENT_VERSION, CONFIG_VERSION_1, CONFIG_VERSION_2, CONFIG_VERSION_3 } from '~/pdf/config';
+import {
+  CONFIG_CURRENT_VERSION,
+  CONFIG_VERSION_1,
+  CONFIG_VERSION_2,
+  CONFIG_VERSION_3,
+  CONFIG_VERSION_4,
+} from '~/pdf/config';
 
 const LEGACY_SIDEBAR_OFFSET = 31;
 
@@ -17,6 +23,8 @@ export function convertConfigToCurrentVersion(config) {
     case CONFIG_VERSION_3:
       return convertFromVersion3(config);
 
+    // Legacy month/day values retain their annual recurrence; never guess a year.
+    case CONFIG_VERSION_4:
     case CONFIG_CURRENT_VERSION:
     default:
       return config;
