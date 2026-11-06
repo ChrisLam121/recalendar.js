@@ -57,6 +57,11 @@ class YearOverviewPage extends React.Component {
         justifyContent: 'flex-start',
         marginBottom: ROW_GAP,
       },
+      yearBreak: {
+        borderTop: '1 solid #777',
+        marginTop: 5,
+        paddingTop: 5,
+      },
       calendar: {
         marginLeft: calendarMargin,
         marginRight: calendarMargin,
@@ -70,8 +75,9 @@ class YearOverviewPage extends React.Component {
     let currentDate = startDate;
     while (currentDate.isBefore(endDate)) {
       const calendars = [];
-      const rowKey = currentDate.unix();
-      while (calendars.length < this.columns && currentDate.isBefore(endDate)) {
+      const rowStart = currentDate;
+      const yearBreak = rows.length > 0 && rowStart.month() === 0;
+      while (calendars.length < this.columns && currentDate.isBefore(endDate) && currentDate.isSame(rowStart, 'year')) {
         calendars.push(
           <View key={currentDate.unix()} style={this.styles.calendar}>
             <MiniCalendar date={currentDate} highlightMode={HIGHLIGHT_NONE} config={config} showArrows={false} />
@@ -81,7 +87,11 @@ class YearOverviewPage extends React.Component {
       }
 
       rows.push(
-        <View key={rowKey} style={this.styles.calendarsRow} wrap={false}>
+        <View
+          key={rowStart.unix()}
+          style={[this.styles.calendarsRow, yearBreak ? this.styles.yearBreak : null]}
+          wrap={false}
+        >
           {calendars}
         </View>,
       );
