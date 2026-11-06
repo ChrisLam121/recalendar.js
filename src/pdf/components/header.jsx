@@ -2,6 +2,8 @@ import { Link, StyleSheet, Text, View } from '@react-pdf/renderer';
 import PropTypes from 'prop-types';
 import React from 'react';
 
+import { redDayText } from '~/pdf/styles';
+
 class Header extends React.PureComponent {
   constructor(props) {
     super(props);
@@ -116,7 +118,8 @@ class Header extends React.PureComponent {
   }
 
   render() {
-    const { calendar, id, nextLink, number, previousLink, subtitle, title, titleLink } = this.props;
+    const { calendar, id, isRedDay, nextLink, number, previousLink, subtitle, title, titleLink } = this.props;
+    const dateStyle = isRedDay ? redDayText : null;
 
     return (
       <View id={id} style={this.styles.header}>
@@ -126,12 +129,12 @@ class Header extends React.PureComponent {
               {title}
             </Link>
             {this.renderArrow(previousLink, '«')}
-            <Text style={this.styles.dayNumber}>{number}</Text>
+            <Text style={[this.styles.dayNumber, dateStyle]}>{number}</Text>
             {this.renderArrow(nextLink, '»')}
           </View>
           <View style={this.styles.dateInfo}>
             {this.renderSpecialItems()}
-            <Text style={this.styles.subtitle}>{subtitle}</Text>
+            <Text style={[this.styles.subtitle, dateStyle]}>{subtitle}</Text>
           </View>
         </View>
         {calendar}
@@ -150,6 +153,7 @@ Header.propTypes = {
   children: PropTypes.node,
   calendar: PropTypes.node.isRequired,
   isLeftHanded: PropTypes.bool.isRequired,
+  isRedDay: PropTypes.bool,
   number: PropTypes.string.isRequired,
   specialItems: PropTypes.array,
   subtitle: PropTypes.string.isRequired,

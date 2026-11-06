@@ -158,14 +158,17 @@ test('day, week overview and mini-calendar all use year-aware matching', async (
   const { default: Week } = await server.ssrLoadModule('/src/pdf/pages/week-overview.jsx');
   const { default: Mini } = await server.ssrLoadModule('/src/pdf/components/mini-calendar.jsx');
   const config = new PdfConfig({ ...range, specialDates: importIcalDates(english, range, 'holiday') });
-  for (const [key, expectedCount] of [
-    ['2027-02-06', 1],
-    ['2027-02-17', 0],
+  for (const [key, expectedCount, expectedRed] of [
+    ['2026-11-07', 0, true],
+    ['2027-02-06', 1, true],
+    ['2027-02-17', 0, false],
+    ['2027-05-13', 1, true],
   ]) {
     const date = dayjs(key);
     const dayPage = new DayPage({ date, config }).render();
     const header = dayPage.props.children[0].props.children.props.children[0];
     assert.equal(header.props.specialItems.length, expectedCount);
+    assert.equal(header.props.isRedDay, expectedRed);
     const weekDay = new Week.WrappedComponent({ date, config }).renderDay(date);
     assert.equal(weekDay.props.children.props.children[1].length, expectedCount);
   }
@@ -181,6 +184,7 @@ test('day, week overview and mini-calendar all use year-aware matching', async (
       day.props.style.some((style) => style.fontWeight === 1000),
       expectedBold,
     );
+    assert.equal(Object.assign({}, ...day.props.style).color, expectedBold ? '#B31B1B' : 'black');
   }
 });
 

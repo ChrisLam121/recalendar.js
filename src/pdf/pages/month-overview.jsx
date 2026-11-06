@@ -11,8 +11,8 @@ import Itinerary from '~/pdf/components/itinerary';
 import MiniCalendar, { HIGHLIGHT_NONE } from '~/pdf/components/mini-calendar';
 import PdfConfig from '~/pdf/config';
 import { dayPageLink, monthOverviewLink } from '~/pdf/lib/links';
-import { pageStyle } from '~/pdf/styles';
-import { splitItemsByPages } from '~/pdf/utils';
+import { pageStyle, redDayText } from '~/pdf/styles';
+import { isRedDay, splitItemsByPages } from '~/pdf/utils';
 
 const DAYS_IN_LONGEST_MONTH = 31;
 const MAX_HABIT_SQUARE_WIDTH = 13;
@@ -178,10 +178,11 @@ class MonthOverviewPage extends React.Component {
   }
 
   renderDay(day) {
+    const dateStyle = isRedDay(day, this.props.config) ? redDayText : null;
     return (
       <Link key={day.unix()} src={'#' + dayPageLink(day, this.props.config)} style={this.styles.habitDay}>
-        <Text style={this.styles.habitDayDate}>{day.format('D')}</Text>
-        <Text style={this.styles.habitDayOfWeek}>{day.format('dd')}</Text>
+        <Text style={[this.styles.habitDayDate, dateStyle]}>{day.format('D')}</Text>
+        <Text style={[this.styles.habitDayOfWeek, dateStyle]}>{day.format('dd')}</Text>
       </Link>
     );
   }

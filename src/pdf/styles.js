@@ -25,3 +25,5 @@ export const content = {
   flexGrow: 1,
   borderTop: '1 solid black',
 };
+
+export const redDayText = { color: '#B31B1B' };

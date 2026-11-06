@@ -11,7 +11,7 @@ import MiniCalendar from '~/pdf/components/mini-calendar';
 import PdfConfig from '~/pdf/config';
 import { dayPageLink, monthOverviewLink, nextDayPageLink, previousDayPageLink } from '~/pdf/lib/links';
 import { content, pageStyle } from '~/pdf/styles';
-import { splitItemsByPages } from '~/pdf/utils';
+import { isRedDay, splitItemsByPages } from '~/pdf/utils';
 
 class DayPage extends React.Component {
   styles = StyleSheet.create(Object.assign({}, { content, page: pageStyle(this.props.config) }));
@@ -40,6 +40,7 @@ class DayPage extends React.Component {
           <View style={this.styles.page}>
             <Header
               isLeftHanded={config.isLeftHanded}
+              isRedDay={isRedDay(date, config, specialItems)}
               title={date.format('MMMM')}
               titleLink={'#' + monthOverviewLink(date, config)}
               subtitle={date.format('dddd')}

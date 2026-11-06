@@ -1,5 +1,11 @@
 import dayjs from 'dayjs/esm';
 import { ITINERARY_NEW_PAGE } from '~/lib/itinerary-utils';
+import { EXACT_DATE_FORMAT, findByDate, isHoliday } from '~/lib/special-dates-utils';
+
+export function isRedDay(date, config, specialItems) {
+  const items = specialItems ?? config.specialDates.filter(findByDate(date.format(EXACT_DATE_FORMAT)));
+  return config.weekendDays.includes(date.day()) || items.some(isHoliday);
+}
 
 export function splitItemsByPages(items) {
   const pages = [[]];

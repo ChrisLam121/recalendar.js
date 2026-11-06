@@ -4,13 +4,8 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { withTranslation } from 'react-i18next';
 
-import { getWeekdays, getWeekendDays, getWeekNumber } from '~/lib/date';
-import {
-  findByDate,
-  isEvent,
-  isHoliday,
-  EXACT_DATE_FORMAT as SPECIAL_DATES_DATE_FORMAT,
-} from '~/lib/special-dates-utils';
+import { getWeekdays, getWeekNumber } from '~/lib/date';
+import { findByDate, isEvent, EXACT_DATE_FORMAT as SPECIAL_DATES_DATE_FORMAT } from '~/lib/special-dates-utils';
 import PdfConfig from '~/pdf/config';
 import {
   dayPageLink,
@@ -19,7 +14,8 @@ import {
   weekRetrospectiveLink,
   yearOverviewLink,
 } from '~/pdf/lib/links';
-import { isInCalendarRange, isRenderedMonth } from '~/pdf/utils';
+import { redDayText } from '~/pdf/styles';
+import { isInCalendarRange, isRedDay, isRenderedMonth } from '~/pdf/utils';
 
 export const MINI_CALENDAR_WIDTH = 145;
 
@@ -88,7 +84,8 @@ class MiniCalendar extends React.Component {
       backgroundColor: '#CCC',
       border: '1 solid #CCC',
     },
-    weekendDay: {
+    redDay: {
+      ...redDayText,
       fontWeight: 1000,
     },
     eventDay: {
@@ -198,7 +195,6 @@ class MiniCalendar extends React.Component {
     const { config, t } = this.props;
     const { day } = this.styles;
     const days = [];
-    const weekendDays = getWeekendDays(config.weekendDays, config.firstDayOfWeek);
     const weekNumber = getWeekNumber(week);
 
     for (let i = 0; i < 7; i++) {
@@ -213,28 +209,22 @@ class MiniCalendar extends React.Component {
         dayStyles.push(this.styles.currentWeekDay);
       }
 
-      if (weekendDays.includes(currentDay.day())) {
-        dayStyles.push(this.styles.weekendDay);
-      }
-
       if (currentDay.month() !== this.props.date.month()) {
         dayStyles.push(this.styles.otherMonthDay);
+      }
+
+      const specialDateKey = currentDay.format(SPECIAL_DATES_DATE_FORMAT);
+      const specialDatesToday = config.specialDates.filter(findByDate(specialDateKey));
+      if (isRedDay(currentDay, config, specialDatesToday)) {
+        dayStyles.push(this.styles.redDay);
       }
 
       if (!isInCalendarRange(currentDay, config)) {
         dayStyles.push(this.styles.noPageDay);
       }
 
-      const specialDateKey = currentDay.format(SPECIAL_DATES_DATE_FORMAT);
-      const specialDatesToday = config.specialDates.filter(findByDate(specialDateKey));
-      if (specialDatesToday.length > 0) {
-        if (specialDatesToday.some(isEvent)) {
-          dayStyles.push(this.styles.eventDay);
-        }
-
-        if (specialDatesToday.some(isHoliday)) {
-          dayStyles.push(this.styles.weekendDay);
-        }
+      if (specialDatesToday.some(isEvent)) {
+        dayStyles.push(this.styles.eventDay);
       }
 
       const dayLink = dayPageLink(currentDay, config);
