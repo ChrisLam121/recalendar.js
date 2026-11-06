@@ -9,6 +9,7 @@ import { findByDate, isEvent, EXACT_DATE_FORMAT as SPECIAL_DATES_DATE_FORMAT } f
 import PdfConfig from '~/pdf/config';
 import {
   dayPageLink,
+  habitTrackerLink,
   monthOverviewLink,
   weekOverviewLink,
   weekRetrospectiveLink,
@@ -74,6 +75,16 @@ class MiniCalendar extends React.Component {
       fontSize: 12,
       fontWeight: 'bold',
     },
+    habitShortcut: {
+      alignSelf: 'center',
+      color: '#444',
+      border: '0.6 solid #888',
+      borderRadius: 2,
+      textDecoration: 'none',
+      fontSize: 9,
+      fontWeight: 'bold',
+      padding: '1 4',
+    },
     pushLeft: {
       marginLeft: 'auto',
     },
@@ -137,18 +148,25 @@ class MiniCalendar extends React.Component {
   }
 
   renderMonthName() {
-    const { monthName, pushLeft, pushRight, header } = this.styles;
-    const { config, date } = this.props;
+    const { monthName, pushLeft, pushRight, header, habitShortcut } = this.styles;
+    const { config, date, showHabits, t } = this.props;
+    const monthLink = monthOverviewLink(date, config);
+    const habitsLink = showHabits && habitTrackerLink(date, config);
 
     return (
       <View style={header}>
         {this.renderMonthArrow(date.subtract(1, 'month'), '<', pushLeft)}
-        <Link src={'#' + monthOverviewLink(date, config)} style={monthName}>
+        <Link src={monthLink ? '#' + monthLink : undefined} style={monthName}>
           {date.format('MMM')}
         </Link>
         <Link src={'#' + yearOverviewLink()} style={monthName}>
           {date.format('YYYY')}
         </Link>
+        {habitsLink && (
+          <Link src={'#' + habitsLink} style={habitShortcut}>
+            {t('calendar.header.habits')}
+          </Link>
+        )}
         {this.renderMonthArrow(date.add(1, 'month'), '>', pushRight)}
       </View>
     );
@@ -290,6 +308,7 @@ class MiniCalendar extends React.Component {
 MiniCalendar.defaultProps = {
   highlightMode: HIGHLIGHT_DAY,
   showArrows: true,
+  showHabits: true,
 };
 
 MiniCalendar.propTypes = {
@@ -297,6 +316,7 @@ MiniCalendar.propTypes = {
   date: PropTypes.instanceOf(dayjs).isRequired,
   highlightMode: PropTypes.oneOf([HIGHLIGHT_DAY, HIGHLIGHT_WEEK, HIGHLIGHT_NONE]),
   showArrows: PropTypes.bool,
+  showHabits: PropTypes.bool,
   t: PropTypes.func.isRequired,
 };
 

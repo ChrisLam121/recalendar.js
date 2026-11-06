@@ -207,6 +207,31 @@ test('restored v4 birthdays and saved v5 exact dates retain their date scope', a
   assert.equal(reloaded.specialDates.filter(findByDate('2027-06-09')).length, 1);
 });
 
+test('mini calendar month and habit links respect the rendered preview range', async () => {
+  const { default: PdfConfig } = await server.ssrLoadModule('/src/pdf/config.js');
+  const { default: MiniCalendar } = await server.ssrLoadModule('/src/pdf/components/mini-calendar.jsx');
+  const config = new PdfConfig(range);
+  config.isPreview = true;
+
+  const getHeaderLinks = (day) => {
+    const calendar = new MiniCalendar.WrappedComponent({
+      date: dayjs.utc(day),
+      config,
+      showHabits: true,
+      t: () => 'H',
+    });
+    return calendar
+      .renderMonthName()
+      .props.children.filter((child) => child?.props?.src)
+      .map((child) => child.props.src);
+  };
+
+  assert.deepEqual(getHeaderLinks('2026-11-01'), ['#month-112026', '#year-overview', '#habits-112026']);
+  assert.deepEqual(getHeaderLinks('2026-12-01'), ['#year-overview']);
+  config.isMonthOverviewEnabled = false;
+  assert.deepEqual(getHeaderLinks('2026-11-01'), ['#day-01112026', '#year-overview']);
+});
+
 test('national-holiday API imports also keep years and filter to planner months', async () => {
   const { default: SpecialDates } = await server.ssrLoadModule('/src/configuration-form/special-dates.jsx');
   const items = [];

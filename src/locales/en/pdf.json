@@ -2,6 +2,7 @@
   "calendar": {
     "header": {
       "week-number": "W#",
+      "habits": "H",
       "retrospective": "Re"
     },
     "body": {

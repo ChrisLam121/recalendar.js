@@ -5,13 +5,14 @@ import React from 'react';
 import PdfConfig from '~/pdf/config';
 import { NOTO_SANS_CJK } from '~/pdf/lib/fonts';
 import DayPage from '~/pdf/pages/day';
+import HabitTrackerPage from '~/pdf/pages/habit-tracker';
 import LastPage from '~/pdf/pages/last';
 import MonthOverviewPage from '~/pdf/pages/month-overview';
 import WeekOverviewPage from '~/pdf/pages/week-overview';
 import WeekRetrospectivePage from '~/pdf/pages/week-retrospective';
 import YearNotesPage from '~/pdf/pages/year-notes';
 import YearOverviewPage from '~/pdf/pages/year-overview';
-import { getCalendarStartDate, getRenderedMonthCount } from '~/pdf/utils';
+import { getCalendarStartDate, getRenderedMonthCount, isRenderedMonth } from '~/pdf/utils';
 
 class RecalendarPdf extends React.Component {
   styles = StyleSheet.create({
@@ -40,9 +41,10 @@ class RecalendarPdf extends React.Component {
       ) {
         weekPages.push(<YearNotesPage key={'year-notes-' + currentDate.year()} date={currentDate} config={config} />);
       }
-      if (config.isMonthOverviewEnabled && currentDate.date() === 1) {
+      if (config.isMonthOverviewEnabled && currentDate.date() === 1 && isRenderedMonth(currentDate, config)) {
         weekPages.push(
           <MonthOverviewPage key={'month-overview-' + currentDate.unix()} date={currentDate} config={config} />,
+          <HabitTrackerPage key={'habit-tracker-' + currentDate.unix()} date={currentDate} config={config} />,
         );
       }
       const key = 'day-' + currentDate.unix();

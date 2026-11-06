@@ -202,7 +202,7 @@
     },
     "month": {
       "title": "Month overview",
-      "description": "The month overview is a place to set goals for the upcoming month, track habits and make other plans.",
+      "description": "Each month starts with a full-page calendar, followed by the habit tracker and monthly itinerary. Tap H in the mini calendar to open the tracker directly.",
       "habits": {
         "title": "Habits"
       },

@@ -34,6 +34,7 @@ class DayPage extends React.Component {
 
     const specialDateKey = this.props.date.format(SPECIAL_DATES_DATE_FORMAT);
     const specialItems = this.props.config.specialDates.filter(findByDate(specialDateKey));
+    const monthLink = monthOverviewLink(date, config);
     return (
       <>
         <Page id={dayPageLink(date, config)} size={getPageSizeInPoints(config)}>
@@ -42,7 +43,7 @@ class DayPage extends React.Component {
               isLeftHanded={config.isLeftHanded}
               isRedDay={isRedDay(date, config, specialItems)}
               title={date.format('MMMM')}
-              titleLink={'#' + monthOverviewLink(date, config)}
+              titleLink={monthLink ? '#' + monthLink : undefined}
               subtitle={date.format('dddd')}
               number={date.format('DD')}
               previousLink={previousDayPageLink(date, config)}

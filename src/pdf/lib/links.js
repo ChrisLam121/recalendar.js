@@ -1,5 +1,5 @@
 import { getWeekId } from '~/lib/date';
-import { isRendered } from '~/pdf/utils';
+import { isRendered, isRenderedMonth } from '~/pdf/utils';
 
 export function dayPageLink(date, config) {
   const dayLink = findEnabledDayPageLink(date, config, 1);
@@ -54,7 +54,7 @@ function findDayOfWeek(needle) {
 
 export function monthOverviewLink(date, config) {
   if (config.isMonthOverviewEnabled) {
-    return isRendered(date.date(1), config) ? 'month-' + date.format('MMYYYY') : '';
+    return isRenderedMonth(date, config) ? 'month-' + date.format('MMYYYY') : '';
   }
 
   const dayLink = findEnabledDayPageLink(date.date(1), config, 1);
@@ -69,6 +69,10 @@ export function monthOverviewLink(date, config) {
   }
 
   return '';
+}
+
+export function habitTrackerLink(date, config) {
+  return config.isMonthOverviewEnabled && isRenderedMonth(date, config) ? 'habits-' + date.format('MMYYYY') : '';
 }
 
 export function weekOverviewLink(date, config) {
