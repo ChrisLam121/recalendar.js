@@ -80,7 +80,7 @@ class YearOverviewPage extends React.Component {
       while (calendars.length < this.columns && currentDate.isBefore(endDate) && currentDate.isSame(rowStart, 'year')) {
         calendars.push(
           <View key={currentDate.unix()} style={this.styles.calendar}>
-            <MiniCalendar date={currentDate} highlightMode={HIGHLIGHT_NONE} config={config} showArrows={false} />
+            <MiniCalendar date={currentDate} highlightMode={HIGHLIGHT_NONE} config={config} isOverview />
           </View>,
         );
         currentDate = currentDate.add(1, 'month');

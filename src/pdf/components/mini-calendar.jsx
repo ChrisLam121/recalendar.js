@@ -20,6 +20,12 @@ import { isInCalendarRange, isRedDay, isRenderedMonth } from '~/pdf/utils';
 
 export const MINI_CALENDAR_WIDTH = 145;
 
+const DAY_COLUMN_WIDTH = 14;
+const WEEK_NUMBER_COLUMN_WIDTH = 20;
+// The week number, seven weekdays and Re columns share the remaining width equally.
+const RETROSPECTIVE_COLUMN_WIDTH =
+  DAY_COLUMN_WIDTH + (MINI_CALENDAR_WIDTH - WEEK_NUMBER_COLUMN_WIDTH - 8 * DAY_COLUMN_WIDTH) / 9;
+
 export const HIGHLIGHT_WEEK = 'HIGHLIGHT_WEEK';
 export const HIGHLIGHT_DAY = 'HIGHLIGHT_DAY';
 export const HIGHLIGHT_NONE = 'HIGHLIGHT_NONE';
@@ -43,7 +49,7 @@ class MiniCalendar extends React.Component {
     day: {
       flexGrow: 1,
       flexShrink: 1,
-      width: 14,
+      width: DAY_COLUMN_WIDTH,
       textDecoration: 'none',
       color: 'black',
       fontWeight: 'normal',
@@ -53,6 +59,18 @@ class MiniCalendar extends React.Component {
     },
     header: {
       flexDirection: 'row',
+    },
+    overviewHeader: {
+      justifyContent: 'center',
+    },
+    overviewHabitSlot: {
+      position: 'absolute',
+      top: 0,
+      bottom: 0,
+      right: 0,
+      // Re is inset by half a point from the center of the last column.
+      width: RETROSPECTIVE_COLUMN_WIDTH + 1,
+      justifyContent: 'center',
     },
     monthArrow: {
       flexBasis: 20,
@@ -115,7 +133,7 @@ class MiniCalendar extends React.Component {
       borderRight: '1 solid black',
       fontSize: 10,
       justifyContent: 'center',
-      width: 20,
+      width: WEEK_NUMBER_COLUMN_WIDTH,
     },
     weekRetrospective: {
       color: '#999',
@@ -148,26 +166,27 @@ class MiniCalendar extends React.Component {
   }
 
   renderMonthName() {
-    const { monthName, pushLeft, pushRight, header, habitShortcut } = this.styles;
-    const { config, date, showHabits, t } = this.props;
+    const { monthName, pushLeft, pushRight, header, overviewHeader, overviewHabitSlot, habitShortcut } = this.styles;
+    const { config, date, isOverview, showHabits, t } = this.props;
     const monthLink = monthOverviewLink(date, config);
     const habitsLink = showHabits && habitTrackerLink(date, config);
+    const habitLink = habitsLink && (
+      <Link src={'#' + habitsLink} style={habitShortcut}>
+        {t('calendar.header.habits')}
+      </Link>
+    );
 
     return (
-      <View style={header}>
-        {this.renderMonthArrow(date.subtract(1, 'month'), '<', pushLeft)}
+      <View style={[header, isOverview ? overviewHeader : null]}>
+        {!isOverview && this.renderMonthArrow(date.subtract(1, 'month'), '<', pushLeft)}
         <Link src={monthLink ? '#' + monthLink : undefined} style={monthName}>
           {date.format('MMM')}
         </Link>
         <Link src={'#' + yearOverviewLink()} style={monthName}>
           {date.format('YYYY')}
         </Link>
-        {habitsLink && (
-          <Link src={'#' + habitsLink} style={habitShortcut}>
-            {t('calendar.header.habits')}
-          </Link>
-        )}
-        {this.renderMonthArrow(date.add(1, 'month'), '>', pushRight)}
+        {isOverview && habitLink ? <View style={overviewHabitSlot}>{habitLink}</View> : habitLink}
+        {!isOverview && this.renderMonthArrow(date.add(1, 'month'), '>', pushRight)}
       </View>
     );
   }
@@ -307,6 +326,7 @@ class MiniCalendar extends React.Component {
 
 MiniCalendar.defaultProps = {
   highlightMode: HIGHLIGHT_DAY,
+  isOverview: false,
   showArrows: true,
   showHabits: true,
 };
@@ -315,6 +335,7 @@ MiniCalendar.propTypes = {
   config: PropTypes.instanceOf(PdfConfig).isRequired,
   date: PropTypes.instanceOf(dayjs).isRequired,
   highlightMode: PropTypes.oneOf([HIGHLIGHT_DAY, HIGHLIGHT_WEEK, HIGHLIGHT_NONE]),
+  isOverview: PropTypes.bool,
   showArrows: PropTypes.bool,
   showHabits: PropTypes.bool,
   t: PropTypes.func.isRequired,
