@@ -78,7 +78,7 @@ class MiniCalendar extends React.Component {
     habitShortcut: {
       alignSelf: 'center',
       color: '#444',
-      border: '0.6 solid #888',
+      border: '0.6 solid transparent',
       borderRadius: 2,
       textDecoration: 'none',
       fontSize: 9,
