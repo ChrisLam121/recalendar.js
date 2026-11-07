@@ -65,6 +65,10 @@ export function isRendered(date, config) {
   return isInRange(date, getRange(renderedRanges, config, getRenderedMonthCount(config)));
 }
 
+export function isRenderedDay(date, config) {
+  return config.isPlannerWorkflowEnabled ? isRenderedMonth(date, config) : isRendered(date, config);
+}
+
 export function isInCalendarRange(date, config) {
   return isInRange(date, getRange(calendarRanges, config, config.monthCount));
 }

@@ -363,6 +363,46 @@ class Configuration extends React.PureComponent {
                 onChange={this.handleFieldChange}
                 onWeekendChange={this.handleWeekendChange}
               />
+              <Form.Check
+                className="mb-3"
+                id="isPlannerWorkflowEnabled"
+                label={t('configuration.general.planner-workflow')}
+                checked={this.state.isPlannerWorkflowEnabled}
+                onChange={this.handleToggle}
+              />
+              {this.state.isPlannerWorkflowEnabled && (
+                <Row className="mb-3">
+                  <Col>
+                    <Form.Group controlId="plannerStartHour">
+                      <Form.Label>{t('configuration.general.planner-start')}</Form.Label>
+                      <Form.Control
+                        type="number"
+                        required
+                        min={0}
+                        max={this.state.plannerEndHour - 1}
+                        step={1}
+                        value={this.state.plannerStartHour}
+                        onChange={this.handleFieldChange}
+                      />
+                    </Form.Group>
+                  </Col>
+                  <Col>
+                    <Form.Group controlId="plannerEndHour">
+                      <Form.Label>{t('configuration.general.planner-end')}</Form.Label>
+                      <Form.Control
+                        type="number"
+                        required
+                        min={this.state.plannerStartHour + 1}
+                        max={24}
+                        step={1}
+                        value={this.state.plannerEndHour}
+                        onChange={this.handleFieldChange}
+                      />
+                    </Form.Group>
+                  </Col>
+                  <Form.Text>{t('configuration.general.planner-hint')}</Form.Text>
+                </Row>
+              )}
               <LineSettings
                 lineStyle={this.state.lineStyle}
                 lineHeightPixels={this.state.lineHeightPixels}

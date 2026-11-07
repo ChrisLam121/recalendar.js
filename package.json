@@ -8,6 +8,7 @@
     "build": "tsc && vite build",
     "lint": "biome check",
     "test": "node --test test/*.test.mjs",
+    "planner": "node scripts/generate-planner.mjs",
     "lint:fix": "npm run lint -- --write --unsafe",
     "preview": "vite preview"
   },

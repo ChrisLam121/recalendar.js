@@ -118,12 +118,14 @@ class Header extends React.PureComponent {
   }
 
   render() {
-    const { calendar, id, isRedDay, nextLink, number, previousLink, subtitle, title, titleLink } = this.props;
+    const { calendar, id, isRedDay, navigation, nextLink, number, previousLink, subtitle, title, titleLink } =
+      this.props;
     const dateStyle = isRedDay ? redDayText : null;
 
     return (
       <View id={id} style={this.styles.header}>
         <View style={this.styles.meta}>
+          {navigation}
           <View style={this.styles.dateMain}>
             <Link src={titleLink} style={this.styles.title}>
               {title}
@@ -152,11 +154,12 @@ Header.propTypes = {
   id: PropTypes.string,
   children: PropTypes.node,
   calendar: PropTypes.node.isRequired,
+  navigation: PropTypes.node,
   isLeftHanded: PropTypes.bool.isRequired,
   isRedDay: PropTypes.bool,
   number: PropTypes.string.isRequired,
   specialItems: PropTypes.array,
-  subtitle: PropTypes.string.isRequired,
+  subtitle: PropTypes.node.isRequired,
   subtitleSize: PropTypes.number,
   title: PropTypes.string.isRequired,
   titleLink: PropTypes.string,

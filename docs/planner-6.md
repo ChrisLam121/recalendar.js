@@ -1,0 +1,86 @@
+# Planner 6: Plan / Actual
+
+Planner 6 is an optional handwriting workflow designed around the portrait
+reMarkable Paper Pro page. Enable **Planner 6.0** in General settings or use the
+local generator below. Disabling it retains the classic ReCalendar itinerary
+layout. The public upstream website does not include this fork's changes.
+
+## What each page does
+
+| Page | Purpose |
+| --- | --- |
+| Home | Date index, month links, weekly plans (W), reviews (R), and year notes |
+| Month | Fixed commitments, deadlines and milestones |
+| Monthly direction & review | Intended outcomes, actual progress, one adjustment, selective notes index |
+| Week | Seven day boxes, a weekly outcome and the main action list |
+| Day | Plan and Actual share one time axis; two small lines identify today's outcomes |
+| Daily Notes | Optional working notes, task breakdown or detailed time log |
+| Weekly review | Progress, one plan/actual difference, one change and decisions on unfinished work |
+| Habits | Existing habit names, a handwritten frequency goal, observations and one adjustment |
+| Inbox | Capture before sorting; mark the destination when moving an item |
+
+Keep completion status on the weekly action list. Daily timelines record time
+and activity, which is different from completing the action. Preserve the plan
+when the day changes, and record actual start/end times and duration on the
+right. A busy day's minimum is one outcome and one actual activity; the layout
+does not require filling every area or reconstructing missed days.
+
+The default timeline is 06:00–22:00 in half-hour intervals. Start and end can be
+changed in the form or CLI, using whole hours between 0 and 24. At the Paper Pro
+size this default gives about 5.4 mm per half-hour and 76 mm per writing column.
+More hours reduce the row height. Rules are quiet grey; main text is dark and
+weekends/holidays retain red accents. Colour never carries the only meaning.
+
+Home, Inbox, Month, Week and Day/Notes navigation stays in the same upper strip.
+Day arrows skip the intervening notes/review pages; Notes arrows stay on Notes.
+Weekly review has a separate **Next plan** link. The month, direction and habits
+arrows each stay with their own page type. Swiping follows physical PDF order.
+The PDF cannot synchronize handwriting, automatically calculate duration or
+provide a dynamic Today button. Device favourites can provide a personal shortcut.
+
+## Generate from an existing planner
+
+Use Node.js 24, then install dependencies with `npm ci`.
+
+```sh
+npm run planner -- --input '/path/to/existing.pdf' --output '/path/to/planner-6.pdf'
+```
+
+The input must contain ReCalendar's embedded `config.json`; a saved JSON config
+also works. The generator preserves the date range, day availability, habits,
+special dates, device size and other configuration, enables Planner 6 and embeds
+the updated configuration in the output. It uses bundled fonts locally and
+checks that the attachment can be read back. It produces a fresh template, not
+a migration of handwritten annotations.
+
+```sh
+# First-month preview, with links restricted to the rendered month:
+npm run planner -- --input existing.pdf --output preview.pdf --preview
+# A wider timeline:
+npm run planner -- --input existing.pdf --output planner-6.pdf --start 5 --end 24
+```
+
+The structured workflow uses its own writing grids and prompts. Classic itinerary
+and line-style settings are kept in the embedded config, but do not override
+those structured grids. English workflow labels are supplied; other locales
+fall back to English for these new labels. The design has been visually checked
+at the Paper Pro portrait size; substantially smaller or landscape formats need
+their own layout review.
+
+Do not commit generated personal planners or their embedded settings to a public
+repository. The generator, layout and tests are sufficient to reproduce them.
+
+## Validation
+
+Run `npm run lint`, `npm test` and `npm run build`. CI runs tests in both
+Asia/Hong_Kong and America/Los_Angeles. PDF regression tests generate an actual
+January preview spanning the year boundary, resolve every internal link,
+check reciprocal Day/Notes links and next-page chains, and confirm that user
+settings survive the round trip. Existing holiday and classic-layout tests
+remain in the suite.
+
+Before distributing a long planner, also inspect rendered examples of every
+page type, six-row months, long holiday names and the first/last dates. Check the
+full PDF's named destinations and physical page bounds. File-level checks do
+not establish on-device refresh speed, finger-tap comfort or pen contrast; those
+still require the actual tablet.

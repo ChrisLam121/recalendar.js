@@ -27,3 +27,5 @@ export const content = {
 };
 
 export const redDayText = { color: '#B31B1B' };
+
+export const WEEKLY_FOCUS_LINE_HEIGHT_PT = 24;

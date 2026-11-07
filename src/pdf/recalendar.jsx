@@ -12,7 +12,12 @@ import WeekOverviewPage from '~/pdf/pages/week-overview';
 import WeekRetrospectivePage from '~/pdf/pages/week-retrospective';
 import YearNotesPage from '~/pdf/pages/year-notes';
 import YearOverviewPage from '~/pdf/pages/year-overview';
-import { getCalendarStartDate, getRenderedMonthCount, isRenderedMonth } from '~/pdf/utils';
+import PlannerAppendix6, { PlannerYearNotes } from '~/pdf/planner/appendix';
+import PlannerDay from '~/pdf/planner/daily';
+import PlannerIndex from '~/pdf/planner/index';
+import { PlannerHabits, PlannerMonth, PlannerMonthDirection } from '~/pdf/planner/monthly';
+import { PlannerReview, PlannerWeek } from '~/pdf/planner/weekly';
+import { getCalendarStartDate, getRenderedMonthCount, isRenderedDay, isRenderedMonth } from '~/pdf/utils';
 
 class RecalendarPdf extends React.Component {
   styles = StyleSheet.create({
@@ -28,6 +33,12 @@ class RecalendarPdf extends React.Component {
   renderWeek(startOfWeek, endDate) {
     const { config } = this.props;
 
+    const Day = config.isPlannerWorkflowEnabled ? PlannerDay : DayPage;
+    const Month = config.isPlannerWorkflowEnabled ? PlannerMonth : MonthOverviewPage;
+    const Habits = config.isPlannerWorkflowEnabled ? PlannerHabits : HabitTrackerPage;
+    const Week = config.isPlannerWorkflowEnabled ? PlannerWeek : WeekOverviewPage;
+    const Review = config.isPlannerWorkflowEnabled ? PlannerReview : WeekRetrospectivePage;
+    const YearNotes = config.isPlannerWorkflowEnabled ? PlannerYearNotes : YearNotesPage;
     const weekPages = [];
     let currentDate = startOfWeek.clone();
     const endOfWeek = startOfWeek.add(1, 'weeks');
@@ -39,23 +50,29 @@ class RecalendarPdf extends React.Component {
         currentDate.year() > config.year &&
         currentDate.isBefore(endDate)
       ) {
-        weekPages.push(<YearNotesPage key={'year-notes-' + currentDate.year()} date={currentDate} config={config} />);
+        weekPages.push(<YearNotes key={'year-notes-' + currentDate.year()} date={currentDate} config={config} />);
       }
       if (config.isMonthOverviewEnabled && currentDate.date() === 1 && isRenderedMonth(currentDate, config)) {
         weekPages.push(
-          <MonthOverviewPage key={'month-overview-' + currentDate.unix()} date={currentDate} config={config} />,
-          <HabitTrackerPage key={'habit-tracker-' + currentDate.unix()} date={currentDate} config={config} />,
+          <Month key={'month-overview-' + currentDate.unix()} date={currentDate} config={config} />,
+          <Habits key={'habit-tracker-' + currentDate.unix()} date={currentDate} config={config} />,
         );
+        if (config.isPlannerWorkflowEnabled) {
+          weekPages.push(
+            <PlannerMonthDirection key={'dashboard-' + currentDate.unix()} date={currentDate} config={config} />,
+          );
+        }
       }
-      const key = 'day-' + currentDate.unix();
-      weekPages.push(<DayPage key={key} date={currentDate} config={config} />);
+      if (isRenderedDay(currentDate, config)) {
+        weekPages.push(<Day key={'day-' + currentDate.unix()} date={currentDate} config={config} />);
+      }
       currentDate = currentDate.add(1, 'days');
     }
     return (
       <React.Fragment key={'week-' + startOfWeek.unix()}>
-        {config.isWeekOverviewEnabled && <WeekOverviewPage date={startOfWeek} config={config} />}
+        {config.isWeekOverviewEnabled && <Week date={startOfWeek} config={config} />}
         {weekPages}
-        {config.isWeekRetrospectiveEnabled && <WeekRetrospectivePage date={startOfWeek} config={config} />}
+        {config.isWeekRetrospectiveEnabled && <Review date={startOfWeek} config={config} />}
       </React.Fragment>
     );
   }
@@ -63,16 +80,16 @@ class RecalendarPdf extends React.Component {
   renderCalendar() {
     const { config } = this.props;
     const { year, monthCount } = config;
+    const Index = config.isPlannerWorkflowEnabled ? PlannerIndex : YearOverviewPage;
+    const YearNotes = config.isPlannerWorkflowEnabled ? PlannerYearNotes : YearNotesPage;
     const pageList = [];
     let currentDate = getCalendarStartDate(config);
     const endDate = currentDate.add(monthCount, 'months');
     const renderedEndDate = currentDate.add(getRenderedMonthCount(config), 'months');
 
-    pageList.push(
-      <YearOverviewPage key={'year-overview-' + year} startDate={currentDate} endDate={endDate} config={config} />,
-    );
+    pageList.push(<Index key={'year-overview-' + year} startDate={currentDate} endDate={endDate} config={config} />);
     if (config.isYearNotesEnabled) {
-      pageList.push(<YearNotesPage key={'year-notes-' + year} date={currentDate} config={config} />);
+      pageList.push(<YearNotes key={'year-notes-' + year} date={currentDate} config={config} />);
     }
 
     currentDate = currentDate.startOf('week');
@@ -81,6 +98,9 @@ class RecalendarPdf extends React.Component {
       currentDate = currentDate.add(1, 'weeks');
     }
 
+    if (config.isPlannerWorkflowEnabled) {
+      pageList.push(<PlannerAppendix6 key="planner-appendix" config={config} />);
+    }
     pageList.push(<LastPage key="last" config={config} />);
 
     return pageList;
