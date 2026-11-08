@@ -1,7 +1,7 @@
 # Planner 6: Plan / Actual
 
 Planner 6 is an optional handwriting workflow designed around the portrait
-reMarkable Paper Pro page. Enable **Planner 6.5** in General settings or use the
+reMarkable Paper Pro page. Enable **Planner 6.6** in General settings or use the
 local generator below. Disabling it retains the classic ReCalendar itinerary
 layout. The public upstream website does not include this fork's changes.
 
@@ -105,6 +105,14 @@ The dot grid starts below the header, with no list of prescribed writing uses.
 The example uses Activity / Start / End / Minutes. Record the activity and start
 when beginning, and complete the last two fields after finishing. The illustrated
 time blocks likewise put the activity first.
+
+## Event markers in 6.6
+
+Home mini calendars draw a dark square around dates with events, including
+annually repeating birthdays and events tied to a specific year. The square
+is separate from date colour: a weekend or holiday event retains its red
+numeral. Adjacent-month dates retain their muted numeral. The marker leaves
+the numeral position and the full date link unchanged.
 
 ## Generate from an existing planner
 

@@ -1,9 +1,10 @@
-import { Link, Text, View } from '@react-pdf/renderer';
+import { Canvas, Link, Text, View } from '@react-pdf/renderer';
 import dayjs from 'dayjs/esm';
 import PropTypes from 'prop-types';
 import { useTranslation } from 'react-i18next';
 
 import { getWeekNumber } from '~/lib/date';
+import { EXACT_DATE_FORMAT, findByDate, isEvent } from '~/lib/special-dates-utils';
 import PdfConfig from '~/pdf/config';
 import {
   dayPageLink,
@@ -61,17 +62,38 @@ function IndexMonth({ date, config, width }) {
             </Link>
             {Array.from({ length: 7 }, (_, i) => week.add(i, 'day')).map((day) => {
               const target = dayPageLink(day, config);
+              const specialDates = config.specialDates.filter(findByDate(day.format(EXACT_DATE_FORMAT)));
+              const hasEvent = specialDates.some(isEvent);
               return (
-                <Link
-                  key={day.unix()}
-                  src={target ? '#' + target : undefined}
-                  style={{
-                    ...cell,
-                    color: !day.isSame(date, 'month') ? '#999' : isRedDay(day, config) ? '#B31B1B' : INK,
-                  }}
-                >
-                  {day.date()}
-                </Link>
+                <View key={day.unix()} style={{ width: dayWidth, height: cell.height }}>
+                  {hasEvent && (
+                    <Canvas
+                      style={{ position: 'absolute', top: 0, left: 0, width: dayWidth, height: cell.height }}
+                      paint={(painter, width, height) => {
+                        // An independent square preserves the numeral's position and the full date link.
+                        const size = Math.min(width, height) - 1;
+                        painter
+                          .strokeColor(INK)
+                          .lineWidth(0.6)
+                          .rect((width - size) / 2, (height - size) / 2, size, size)
+                          .stroke();
+                      }}
+                    />
+                  )}
+                  <Link
+                    src={target ? '#' + target : undefined}
+                    style={{
+                      ...cell,
+                      color: !day.isSame(date, 'month')
+                        ? '#999'
+                        : isRedDay(day, config, specialDates)
+                          ? '#B31B1B'
+                          : INK,
+                    }}
+                  >
+                    {day.date()}
+                  </Link>
+                </View>
               );
             })}
             <Link src={review ? '#' + review : undefined} style={reviewCell}>

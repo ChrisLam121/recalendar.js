@@ -6,7 +6,7 @@ import path from 'node:path';
 import { after, test } from 'node:test';
 import { fileURLToPath } from 'node:url';
 import { promisify } from 'node:util';
-import { PDFArray, PDFDict, PDFDocument, PDFName } from '@cantoo/pdf-lib';
+import { decodePDFRawStream, PDFArray, PDFDict, PDFDocument, PDFName } from '@cantoo/pdf-lib';
 import i18n from 'i18next';
 import { createServer } from 'vite';
 
@@ -77,7 +77,7 @@ function targets(page) {
   });
 }
 
-test('generated preview has complete navigation, reciprocal Notes and preserved settings', {
+test('generated preview has event boxes, complete navigation, reciprocal Notes and preserved settings', {
   timeout: 120000,
 }, async () => {
   const temp = await mkdtemp(path.join(os.tmpdir(), 'planner-test-'));
@@ -94,7 +94,14 @@ test('generated preview has complete navigation, reciprocal Notes and preserved 
       pageSize: [1620, 2160],
       dpi: 229,
       habits: [{ id: 'reading', value: 'Reading' }],
-      specialDates: [{ id: 'newyear', date: '2027-01-01', value: 'New Year / 元旦', type: 'holiday' }],
+      specialDates: [
+        { id: 'newyear', date: '2027-01-01', value: 'New Year / 元旦', type: 'holiday' },
+        { id: 'annual', date: '01-01', value: 'Annual event on a holiday', type: 'event' },
+        { id: 'same-day', date: '2027-01-01', value: 'Another event on the same date', type: 'event' },
+        { id: 'birthday', date: '01-15', value: 'Birthday', type: 'event' },
+        { id: 'weekend', date: '2027-01-16', value: 'Weekend event', type: 'event' },
+        { id: 'past', date: '2026-01-18', value: 'Previous year only', type: 'event' },
+      ],
     };
     await writeFile(input, JSON.stringify(config));
     await promisify(execFile)(
@@ -110,6 +117,19 @@ test('generated preview has complete navigation, reciprocal Notes and preserved 
     const named = destinations(pdf);
     const pagesByRef = new Map(pdf.getPages().map((page) => [page.ref.toString(), page]));
     const getPage = (name) => pagesByRef.get(named.get(name).get(0).toString());
+    const home = getPage('year-overview');
+    const contents = home.node.Contents();
+    const streams =
+      contents instanceof PDFArray ? contents.asArray().map((ref) => pdf.context.lookup(ref)) : [contents];
+    const operators = streams.map((stream) => Buffer.from(decodePDFRawStream(stream).decode()).toString()).join('\n');
+    // Inspect drawn PDF rectangles, not just the event settings or React props.
+    // Two events on Jan 1 share a box; last year's Jan 18 must not gain one.
+    const squares = [...operators.matchAll(/([-\d.]+) ([-\d.]+) ([-\d.]+) ([-\d.]+) re\s+S/g)];
+    assert.equal(squares.length, 3, 'Home should visibly frame exactly Jan 1, Jan 15 and Jan 16');
+    for (const [, , , width, height] of squares) {
+      assert.equal(Number(width), Number(height));
+      assert.ok(Number(width) >= 11, 'Event boxes must enclose two-digit dates');
+    }
     for (const page of pdf.getPages()) {
       for (const target of targets(page)) {
         assert.ok(named.has(target), `Missing destination: ${target}`);
