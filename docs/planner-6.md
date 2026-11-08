@@ -1,7 +1,7 @@
 # Planner 6: Plan / Actual
 
 Planner 6 is an optional handwriting workflow designed around the portrait
-reMarkable Paper Pro page. Enable **Planner 6.3** in General settings or use the
+reMarkable Paper Pro page. Enable **Planner 6.4** in General settings or use the
 local generator below. Disabling it retains the classic ReCalendar itinerary
 layout. The public upstream website does not include this fork's changes.
 
@@ -12,12 +12,12 @@ layout. The public upstream website does not include this fork's changes.
 | Home | Date index, month links, weekly plans (W), reviews (R), and year notes |
 | Month | Fixed commitments, deadlines and milestones |
 | Monthly direction & review | Intended outcomes, actual progress, one adjustment, selective notes index |
-| Week | Seven day boxes, a weekly outcome and the main action list |
+| Week | Seven chronological day rows with two writing lines each; a weekly focus and 16-action list |
 | Day | Plan and Actual share one time axis; one 8.5 mm row identifies today's outcome |
 | Daily Notes | Optional working notes, task breakdown or detailed time log |
 | Weekly review | Progress, one plan/actual difference, one change and decisions on unfinished work |
 | Habits | Existing habit names, a handwritten frequency goal, observations and one adjustment |
-| Inbox | Capture before sorting; mark the destination when moving an item |
+| Inbox | Two linked capture pages, 20 items each; mark the destination when moving an item |
 
 Keep completion status on the weekly action list. Daily timelines record time
 and activity, which is different from completing the action. Preserve the plan
@@ -36,9 +36,9 @@ Day arrows skip the intervening notes/review pages; Notes arrows stay on Notes.
 Weekly review has a separate **Next plan** link. The month, direction and habits
 arrows each stay with their own page type. Swiping follows physical PDF order.
 The PDF cannot synchronize handwriting, automatically calculate duration or
-provide a dynamic Today button. Device favourites can provide a personal shortcut.
+provide a dynamic Today button. Device favourites refer to files, not individual planner pages.
 
-## Mixed Chinese/English handwriting (6.3)
+## Mixed Chinese/English handwriting
 
 Use the same writing area for both languages. The main ruled baseline is 8.5 mm,
 chosen from the owner's actual handwriting experience. Dot grids are 4.25 mm in
@@ -51,17 +51,44 @@ this choice does not promise identical pixels in every viewing mode or zoom.
 This is a design choice for this owner, not a universal handwriting standard.
 
 Weekly actions and Inbox use 4 × 4 mm checkboxes with a 3 mm gap before the writing
-line. On Paper Pro the wider rows yield four weekly actions and twenty Inbox
-rows. Daily focus is one 8.5 mm row. The 06:00–22:00 timeline keeps the full day:
+line. On Paper Pro these rows yield sixteen weekly actions and twenty Inbox
+rows per page (two pages). Daily focus is one 8.5 mm row. The 06:00–22:00 timeline keeps the full day:
 hourly rules (about 10.9 mm apart) use 0.6 pt #999999 strokes; full-width
 half-hour guides use thinner 0.4 pt #D0D0D0 strokes. Both stop at the centre
 time axis. Half-hour spacing is about 5.4 mm; handwriting can span more than
 one half-hour interval. Month cells stay open, and the habit
-marking matrix and detailed log retain their purpose-specific cell dimensions.
+marking matrix retains its purpose-specific cell dimensions.
 
-The Home index separates each month's weekday/date grid from the week-number
+The Home index groups months under explicit year headings and provides clearly
+labelled Year notes links. It separates each month's weekday/date grid from the week-number
 and review columns with two continuous vertical rules. Week numbers and R links
 use a lighter grey than the actual date numbers, with their existing destinations.
+
+## Refinements in 6.4
+
+The weekly layout gives 60% of the width to seven chronological day rows and
+40% to the task list. Day rows hold commitments; the task list owns completion
+status. Each date retains two 8.5 mm writing lines. The action list provides
+16 rows on Paper Pro; longer actions can use two rows. Plan and Actual retain
+their original dimensions and calibrated writing guides.
+
+Weekly and monthly review headings are shorter, with full instructions in Guide.
+The monthly Notes to revisit index has four 8.5 mm rows with Date and Keyword
+columns. Weekly review focuses on execution; monthly review checks direction;
+habit reflection is optional. Move unfinished work directly on the weekly list
+and record the reason in Review, avoiding an extra copy of the task list.
+
+Habits adds week-boundary rules that follow the configured first day of the week.
+Habits and Direction paging labels now identify their actual destination type.
+Inbox has two linked pages; Home always opens its first page. The guide explains
+how to process both pages and add a dated note page in reMarkable when Notes is
+full. Such inserted pages have no generated PDF navigation of their own.
+
+A day in practice replaces the blank log reference with an enlarged 09:00–11:00
+example: 60 minutes planned, two math blocks totalling 80 minutes and a 15-minute
+interruption. It distinguishes time spent from task completion and demonstrates
+how the record informs weekly and monthly review. A detailed list in Notes is
+an alternative to detailed timeline entries, not a second mandatory record.
 
 ## Generate from an existing planner
 

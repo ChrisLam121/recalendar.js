@@ -32,7 +32,7 @@ export const styles = StyleSheet.create({
   label: { fontSize: 11, fontWeight: 'bold', color: INK },
   hint: { fontSize: 9, color: MUTED, lineHeight: 1.3 },
   section: { flex: 1, marginBottom: 12 },
-  sectionTitle: { fontSize: 13, fontWeight: 'bold', color: INK, marginBottom: 5 },
+  sectionTitle: { fontSize: 11, fontWeight: 'bold', color: INK, marginBottom: 5 },
 });
 
 export function Nav({ id, links = [], previous, next, paging = 'day' }) {
@@ -101,7 +101,13 @@ export function Sheet({
       <View style={pageStyle(config)}>
         <View style={{ flex: 1, marginHorizontal: MARGIN, paddingBottom: MARGIN }}>
           <Nav id={id} links={links} previous={previous} next={next} paging={paging} />
-          <View style={[styles.heading, { height: headerHeight - 30 }]}>
+          <View
+            style={[
+              styles.heading,
+              { height: headerHeight - 30 },
+              headerHeight < HEADER_HEIGHT && { paddingTop: 4, paddingBottom: 4 },
+            ]}
+          >
             {heading || (
               <>
                 <Text style={styles.title}>{title}</Text>

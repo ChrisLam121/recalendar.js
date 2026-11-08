@@ -104,7 +104,7 @@
       }
     },
     "footer": {
-      "title": "ReCalendar Planner 6.3",
+      "title": "ReCalendar Planner 6.4",
       "subtitle": "Open this PDF in the local ReCalendar fork to reuse its planner settings."
     },
     "log": {
@@ -130,7 +130,7 @@
       "review": "Review",
       "notes": "Notes",
       "day": "Day",
-      "reference": "Log example",
+      "reference": "Example",
       "next-plan": "Next plan",
       "prev-day": "‹ Day",
       "next-day": "Day ›",
@@ -143,7 +143,13 @@
       "prev-review": "‹ Review",
       "next-review": "Review ›",
       "prev-index": "‹ Index",
-      "next-index": "Index ›"
+      "next-index": "Index ›",
+      "prev-direction": "‹ Direction",
+      "next-direction": "Direction ›",
+      "prev-habits": "‹ Habits",
+      "next-habits": "Habits ›",
+      "prev-inbox": "‹ Inbox",
+      "next-inbox": "Inbox ›"
     },
     "daily": {
       "focus": "Today's outcome",
@@ -155,49 +161,44 @@
     "week": {
       "subtitle": "WEEK {{week}}  ·  Commitments and next actions",
       "outside": "Outside this planner",
-      "outcomes": "This week, move forward",
-      "actions": "This week’s actions",
-      "status": "□ open   ✓ done   → moved   × cancelled"
+      "outcomes": "Weekly focus",
+      "actions": "Actions",
+      "status": "□ open   ✓ done\n→ moved   × cancelled"
     },
     "review": {
       "subtitle": "WEEKLY REVIEW  ·  A sentence in each area is enough",
-      "progress": "What moved forward?",
-      "progress-hint": "Look at this week’s actions and daily records.",
-      "difference": "One gap between plan and actual",
-      "difference-hint": "Planned time / actual time / what caused the difference.",
-      "change": "One change for next week",
-      "change-hint": "Make it specific enough to try.",
-      "decisions": "Decide what happens to unfinished work",
-      "decisions-hint": "Continue, change, cancel or move. Write the destination, then update the action list."
+      "progress": "Progress",
+      "difference": "Plan vs actual",
+      "change": "Next week",
+      "decisions": "Unfinished work"
     },
     "month": {
       "calendar-hint": "Fixed commitments, deadlines and milestones",
       "direction": "MONTHLY DIRECTION & REVIEW",
-      "outcomes": "At the start: what should move forward?",
-      "outcomes-hint": "Choose outcomes. Note the time or commitments that limit what is realistic.",
-      "progress": "Looking back: what actually progressed?",
-      "progress-hint": "Compare with the intention above. What helped, or got in the way?",
-      "adjust": "One adjustment for next month",
-      "adjust-hint": "Carry the decision into next month’s direction.",
-      "index": "Notes worth finding again",
-      "index-hint": "Date + keyword. Only index what you expect to revisit."
+      "outcomes": "This month’s direction",
+      "progress": "Progress & what matters",
+      "adjust": "Next month’s direction",
+      "index": "Notes to revisit",
+      "index-date": "Date",
+      "index-keyword": "Keyword / decision"
     },
     "habits": {
       "title": "HABITS  ·  Notice patterns over the month",
-      "hint": "Write a goal such as daily or 3/w. Mark when it happens; a blank is not automatically a missed goal.",
+      "hint": "Track what matters now. Set a goal such as daily or 3/w; a blank is not automatically a missed goal.",
       "habit": "Habit",
       "goal": "Goal",
-      "pattern": "What pattern do I notice?",
-      "change": "One adjustment to try"
+      "pattern": "Pattern noticed",
+      "change": "One adjustment (optional)"
     },
     "year": {
       "notes": "YEAR NOTES  ·  Long-term direction or milestones, if useful",
-      "index": "Date index · W = week, R = review"
+      "index": "Date index · W = week, R = review",
+      "notes-link": "{{year}} Year notes ›"
     },
     "inbox": {
       "title": "Inbox",
       "subtitle": "Catch it now. Decide where it belongs later.",
-      "hint": "Review weekly. Move a chosen action to its week and mark the destination here. Clear processed entries when space is needed.",
+      "hint": "Process both pages each week. Move chosen actions to Week and note the destination. Keep open items; clear processed ones when needed.",
       "legend": "□ To do     ✓ Done     → Moved     × Cancelled"
     },
     "guide": {
@@ -205,35 +206,47 @@
       "subtitle": "Plan, act, record, adjust",
       "capture": {
         "title": "1  Capture without sorting",
-        "body": "An idea such as “work on mathematics” can go straight into Inbox. A fixed appointment can go directly on the month calendar."
+        "body": "Capture ideas in either Inbox page. Put fixed appointments and deadlines on Month. Process both Inbox pages weekly; move chosen actions to Week and mark their destination."
       },
       "choose": {
         "title": "2  Choose a result and a next action",
-        "body": "Month Direction: finish a chapter. Week: complete exercises 1–6. Keep the action’s completion status on the weekly list; mark the destination when moving it out of Inbox."
+        "body": "Choose a direction for the month, then practical actions for the week. The seven day rows hold commitments; the action list holds completion status. Daily Plan assigns time to those actions."
       },
       "day": {
         "title": "3  Plan on the left, record on the right",
-        "body": "Plan: 09:00–10:00 Mathematics. Actual: 09:20–10:40 Mathematics, 80 min. Keep the original plan visible. Time spent does not automatically mean the action is complete. Update the weekly list at day’s end."
+        "body": "Keep the original plan visible; record real start/end times and duration in Actual. Half-hour lines locate time, not text rows. Open Example for an interrupted day. Update the weekly task status separately."
       },
       "review": {
-        "title": "4  Use one difference to improve the next plan",
-        "body": "At week’s end, choose one useful change. For example, allow 80 minutes next time. Decide what happens to unfinished work. At month’s end, compare progress with Month Direction; use Habits to notice patterns."
+        "title": "4  Review at the right scale",
+        "body": "Weekly: note progress, one time-estimate gap and one change to try. Decide the destination of unfinished actions on Week. Monthly: compare direction with progress and choose what deserves attention next. Habits: look for a pattern; an adjustment is optional."
       },
       "navigation": {
         "title": "Find your place",
-        "body": "Home opens the date index. Month, Week and Notes are direct links. Day arrows move between dates; Notes arrows stay on notes pages. Swipe to the next physical page. Use Notes for a detailed log when needed, and record important dates + keywords in the monthly index."
+        "body": "Use Month and Week for nearby dates, Home for another month. Day and Notes arrows stay on their own page type; swiping follows PDF page order. From Inbox, Home leads back to a date. Index useful notes by date + keyword in monthly Direction."
       },
       "minimum-title": "On a busy day",
-      "minimum": "Choose one outcome and record the main activity. Leave the rest blank. Resume from today after a missed day; there is no need to reconstruct every minute."
+      "minimum": "Choose one outcome and record the main activity. Leave the rest blank. Resume from today after a missed day; there is no need to reconstruct every minute.",
+      "overflow": {
+        "title": "When a page fills up",
+        "body": "Use the second Inbox page before clearing processed entries. If Notes fills up, add a New note page after it on reMarkable; write the same date and update the monthly index. Added pages have no printed planner navigation. Let a longer weekly action span two lines if needed."
+      }
     },
     "log": {
-      "title": "Detailed log reference",
-      "subtitle": "An optional format for a day’s Notes page",
-      "hint": "Daily records belong with their date. Copy these headings into Notes when a list is easier than the Actual timeline.",
-      "example": "Example: 09:20–10:40  /  80 min  /  Mathematics, exercises 1–4",
-      "interval": "Start - end",
-      "duration": "Duration",
-      "activity": "Activity"
+      "title": "A day in practice",
+      "subtitle": "An interrupted morning, recorded once",
+      "hint": "Illustrative example · 09:00–11:00 enlarged. The task is to complete exercises 1–6.",
+      "planned": "09:00–10:00\nMath · exercises 1–6\n60 min planned",
+      "first": "09:20–10:05\nMath · exercises 1–3\n45 min",
+      "call": "10:05–10:20 · Call · 15 min",
+      "second": "10:20–10:55\nMath · exercise 4\n35 min",
+      "total": "Math: 45 + 35 = 80 min.  Call: 15 min.",
+      "difference": "Start: 20 min late. Math took 20 min more than planned. The 95-minute elapsed window includes the call.",
+      "task-title": "Update the action separately",
+      "task-body": "Write “4/6 done” beside the weekly action. Keep exercises 5–6 open. If moved, write the new date or week beside the arrow; leave the actual time record intact.",
+      "review-title": "Turn the difference into a decision",
+      "review-body": "Weekly review: “Allow 80 min for similar work, with room for interruptions.” Monthly review: decide whether this learning direction still deserves the time.",
+      "notes-title": "When a list is easier",
+      "notes-body": "Use dated Notes for start–end / minutes / activity. For example: 09:20–10:05 / 45 min / Math. Choose this list or detailed timeline entries; avoid copying both. Index only notes you expect to revisit."
     }
   }
 }

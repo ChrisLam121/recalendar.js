@@ -14,7 +14,7 @@ import {
 } from '~/pdf/lib/links';
 import { isRedDay } from '~/pdf/utils';
 
-import { INK, MUTED, plannerArea } from './geometry';
+import { INK, LIGHT_RULE, MUTED, mm, plannerArea, WRITING_PITCH } from './geometry';
 import { Prompt, Sheet, styles } from './layout';
 
 export function PlannerMonth({ date, config }) {
@@ -99,7 +99,7 @@ export function PlannerMonthDirection({ date, config }) {
       id={monthDashboardLink(date, config)}
       title={date.format('MMMM YYYY')}
       subtitle={t('planner6.month.direction')}
-      paging="month"
+      paging="direction"
       links={[
         [monthOverviewLink(date, config), 'month'],
         [habitTrackerLink(date, config), 'habits'],
@@ -107,10 +107,24 @@ export function PlannerMonthDirection({ date, config }) {
       previous={monthDashboardLink(date.subtract(1, 'month'), config)}
       next={monthDashboardLink(date.add(1, 'month'), config)}
     >
-      <Prompt title={t('planner6.month.outcomes')} hint={t('planner6.month.outcomes-hint')} weight={1.3} />
-      <Prompt title={t('planner6.month.progress')} hint={t('planner6.month.progress-hint')} weight={1.2} />
-      <Prompt title={t('planner6.month.adjust')} hint={t('planner6.month.adjust-hint')} weight={0.8} />
-      <Prompt title={t('planner6.month.index')} hint={t('planner6.month.index-hint')} weight={0.6} />
+      <Prompt title={t('planner6.month.outcomes')} weight={1.1} />
+      <Prompt title={t('planner6.month.progress')} />
+      <Prompt title={t('planner6.month.adjust')} weight={0.8} />
+      <View style={{ marginBottom: 4 }}>
+        <Text style={styles.sectionTitle}>{t('planner6.month.index')}</Text>
+        <View style={{ flexDirection: 'row', height: 16 }}>
+          <Text style={[styles.hint, { width: mm(23) }]}>{t('planner6.month.index-date')}</Text>
+          <Text style={styles.hint}>{t('planner6.month.index-keyword')}</Text>
+        </View>
+        {[0, 1, 2, 3].map((row) => (
+          <View
+            key={row}
+            style={{ flexDirection: 'row', height: WRITING_PITCH, borderBottom: '0.4 solid ' + LIGHT_RULE }}
+          >
+            <View style={{ width: mm(20), borderRight: '0.4 solid ' + LIGHT_RULE }} />
+          </View>
+        ))}
+      </View>
     </Sheet>
   );
 }
@@ -135,7 +149,7 @@ export function PlannerHabits({ date, config }) {
       id={habitTrackerLink(date, config)}
       title={date.format('MMMM YYYY')}
       subtitle={t('planner6.habits.title')}
-      paging="month"
+      paging="habits"
       links={[
         [monthOverviewLink(date, config), 'month'],
         [monthDashboardLink(date, config), 'direction'],
@@ -150,7 +164,13 @@ export function PlannerHabits({ date, config }) {
           {t('planner6.habits.goal')}
         </Text>
         {days.map((day) => (
-          <View key={day.date()} style={{ width: cellWidth, alignItems: 'center' }}>
+          <View
+            key={day.date()}
+            style={[
+              { width: cellWidth, alignItems: 'center' },
+              day.day() === config.firstDayOfWeek && day.date() > 1 && { borderLeft: '0.7 solid #888' },
+            ]}
+          >
             <Text style={{ fontSize: 8, color: isRedDay(day, config) ? '#B31B1B' : INK }}>{day.date()}</Text>
             <Text style={{ fontSize: 7, color: MUTED, marginTop: 3 }}>{day.format('dd')}</Text>
           </View>
@@ -181,7 +201,11 @@ export function PlannerHabits({ date, config }) {
           {days.map((day) => (
             <View
               key={day.date()}
-              style={[cellStyle, config.weekendDays.includes(day.day()) && { backgroundColor: '#F0F0F0' }]}
+              style={[
+                cellStyle,
+                config.weekendDays.includes(day.day()) && { backgroundColor: '#F0F0F0' },
+                day.day() === config.firstDayOfWeek && day.date() > 1 && { borderLeft: '0.7 solid #888' },
+              ]}
             />
           ))}
         </View>

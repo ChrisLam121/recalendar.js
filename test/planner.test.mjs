@@ -105,8 +105,8 @@ test('generated preview has complete navigation, reciprocal Notes and preserved 
     const bytes = await readFile(output);
     const pdf = await PDFDocument.load(bytes);
     // January 2027 spans six Sunday-start weeks: 62 daily sheets + 12 weekly
-    // sheets + 3 monthly sheets + Home + Year Notes + 4 appendix/settings sheets.
-    assert.equal(pdf.getPageCount(), 83);
+    // sheets + 3 monthly sheets + Home + Year Notes + 5 appendix/settings sheets.
+    assert.equal(pdf.getPageCount(), 84);
     const named = destinations(pdf);
     const pagesByRef = new Map(pdf.getPages().map((page) => [page.ref.toString(), page]));
     const getPage = (name) => pagesByRef.get(named.get(name).get(0).toString());
@@ -126,6 +126,9 @@ test('generated preview has complete navigation, reciprocal Notes and preserved 
         assert.ok(targets(getPage('notes-' + date)).includes('notes-' + next));
       }
     }
+    assert.ok(targets(getPage('year-overview')).includes('year-notes-2027'));
+    assert.ok(targets(getPage('master-inbox')).includes('master-inbox-2'));
+    assert.ok(targets(getPage('master-inbox-2')).includes('master-inbox'));
     assert.ok(named.has('week-overview-532026'));
     assert.ok(targets(getPage('day-01012027')).includes('week-overview-532026'));
     assert.ok(targets(getPage('week-retrospective-532026')).includes('week-overview-012027'));

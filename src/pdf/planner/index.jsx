@@ -16,7 +16,7 @@ import {
 } from '~/pdf/lib/links';
 import { getCalendarStartDate, getRenderedMonthCount, isRedDay } from '~/pdf/utils';
 
-import { INK, MUTED, plannerArea } from './geometry';
+import { HEADER_HEIGHT, INK, MUTED, plannerArea } from './geometry';
 import { Sheet } from './layout';
 
 function IndexMonth({ date, config, width }) {
@@ -32,7 +32,6 @@ function IndexMonth({ date, config, width }) {
   const weekCell = { ...navigationCell, borderRight: '0.6 solid #AAAAAA' };
   const reviewCell = { ...navigationCell, borderLeft: '0.6 solid #AAAAAA' };
   const month = monthOverviewLink(date, config);
-  const year = config.isYearNotesEnabled && yearNotesLink(date);
   return (
     <View style={{ width }}>
       <View style={{ height: 18, flexDirection: 'row', alignItems: 'center' }}>
@@ -41,12 +40,6 @@ function IndexMonth({ date, config, width }) {
           style={{ fontSize: 11, color: INK, fontWeight: 'bold', textDecoration: 'none' }}
         >
           {date.format('MMMM')}
-        </Link>
-        <Link
-          src={year ? '#' + year : undefined}
-          style={{ marginLeft: 'auto', fontSize: 9, color: MUTED, textDecoration: 'none' }}
-        >
-          {date.format('YYYY')}
         </Link>
       </View>
       <View style={{ flexDirection: 'row', borderBottom: '0.5 solid #999' }}>
@@ -104,7 +97,10 @@ export default function PlannerIndex({ config }) {
   const { width, height } = plannerArea(config);
   const columns = Math.max(1, Math.floor(width / 140));
   const tileWidth = (width - (columns - 1) * 14) / columns;
-  const rowsPerPage = Math.max(1, Math.floor(height / 110));
+  const headerHeight = 86;
+  const availableHeight = height + HEADER_HEIGHT - headerHeight;
+  const rowHeight = 108;
+  const groupHeight = 14;
   const rows = [];
   for (let i = 0; i < count; ) {
     const row = [];
@@ -114,7 +110,24 @@ export default function PlannerIndex({ config }) {
     }
     rows.push(row);
   }
-  const pageCount = Math.ceil(rows.length / rowsPerPage);
+  const pages = [];
+  let pageRows = [];
+  let usedHeight = 0;
+  for (const row of rows) {
+    let showYear = !pageRows.length || pageRows.at(-1).dates[0].year() !== row[0].year();
+    if (pageRows.length && usedHeight + rowHeight + (showYear ? groupHeight : 0) > availableHeight) {
+      pages.push(pageRows);
+      pageRows = [];
+      usedHeight = 0;
+      showYear = true;
+    }
+    pageRows.push({ dates: row, showYear });
+    usedHeight += rowHeight + (showYear ? groupHeight : 0);
+  }
+  if (pageRows.length) {
+    pages.push(pageRows);
+  }
+  const pageCount = pages.length;
   const pageId = (i) => (i === 0 ? yearOverviewLink() : 'year-index-' + (i + 1));
   return Array.from({ length: pageCount }, (_, page) => (
     <Sheet
@@ -122,18 +135,55 @@ export default function PlannerIndex({ config }) {
       config={config}
       id={pageId(page)}
       bookmark={page === 0 ? t('planner6.nav.home') : undefined}
-      title={start.year() === last.year() ? start.format('YYYY') : start.format('YYYY') + ' / ' + last.format('YYYY')}
-      subtitle={start.format('MMMM YYYY') + ' - ' + last.format('MMMM YYYY') + '  ·  ' + t('planner6.year.index')}
+      headerHeight={headerHeight}
+      heading={
+        <View>
+          <Text style={{ fontSize: 24, fontWeight: 'bold', color: INK }}>
+            {start.year() === last.year() ? start.format('YYYY') : start.format('YYYY') + ' / ' + last.format('YYYY')}
+          </Text>
+          <Text style={{ fontSize: 9.5, color: MUTED, marginTop: 4 }}>
+            {start.format('MMM YYYY') + ' - ' + last.format('MMM YYYY') + '  ·  ' + t('planner6.year.index')}
+          </Text>
+        </View>
+      }
       links={[[PLANNER_MANUAL, 'guide']]}
       paging="index"
       previous={page > 0 ? pageId(page - 1) : undefined}
       next={page + 1 < pageCount ? pageId(page + 1) : undefined}
     >
-      {rows.slice(page * rowsPerPage, (page + 1) * rowsPerPage).map((row) => (
-        <View key={row[0].unix()} style={{ flexDirection: 'row', height: 110, columnGap: 14 }}>
-          {row.map((date) => (
-            <IndexMonth key={date.unix()} date={date} config={config} width={tileWidth} />
-          ))}
+      {pages[page].map(({ dates, showYear }) => (
+        <View key={dates[0].unix()}>
+          {showYear && (
+            <View
+              style={{
+                height: groupHeight,
+                flexDirection: 'row',
+                alignItems: 'center',
+                borderTop: '0.5 solid #B4B4B4',
+              }}
+            >
+              <Text style={{ fontSize: 9, fontWeight: 'bold', color: MUTED }}>{dates[0].format('YYYY')}</Text>
+              {config.isYearNotesEnabled && (
+                <Link
+                  src={'#' + yearNotesLink(dates[0])}
+                  style={{
+                    marginLeft: 'auto',
+                    fontSize: 8.5,
+                    color: MUTED,
+                    textDecoration: 'none',
+                    paddingHorizontal: 5,
+                  }}
+                >
+                  {t('planner6.year.notes-link', { year: dates[0].year() })}
+                </Link>
+              )}
+            </View>
+          )}
+          <View style={{ flexDirection: 'row', height: rowHeight, columnGap: 14 }}>
+            {dates.map((date) => (
+              <IndexMonth key={date.unix()} date={date} config={config} width={tileWidth} />
+            ))}
+          </View>
         </View>
       ))}
     </Sheet>
