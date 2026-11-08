@@ -16,7 +16,11 @@ export function PlannerWeek({ date, config }) {
   const days = Array.from({ length: 7 }, (_, i) => date.startOf('week').add(i, 'day'));
   const { height } = plannerArea(config);
   const rowHeight = height / 7;
-  const actionCount = Math.max(1, Math.min(16, Math.floor((height - 140) / WRITING_PITCH)));
+  const focusGap = 8;
+  const labelHeight = 11 * 1.2;
+  const legendHeight = 8 * 1.4;
+  const actionHeaderHeight = 6 + labelHeight + WRITING_PITCH + 3 + focusGap + labelHeight + 5 + legendHeight + 6;
+  const actionCount = Math.max(1, Math.floor((height - 0.6 - actionHeaderHeight) / WRITING_PITCH));
   const links = [
     [weekMonthOverviewLink(date, config), 'month'],
     [weekRetrospectiveLink(date, config), 'review'],
@@ -59,11 +63,11 @@ export function PlannerWeek({ date, config }) {
           })}
         </View>
         <View style={{ width: '40%', paddingLeft: 14, paddingTop: 6 }}>
-          <Text style={styles.label}>{t('planner6.week.outcomes')}</Text>
-          <View style={{ height: WRITING_PITCH + 3, marginBottom: 16 }}>
+          <Text style={[styles.label, { lineHeight: 1.2 }]}>{t('planner6.week.outcomes')}</Text>
+          <View style={{ height: WRITING_PITCH + 3, marginBottom: focusGap }}>
             <Writing />
           </View>
-          <Text style={styles.label}>{t('planner6.week.actions')}</Text>
+          <Text style={[styles.label, { lineHeight: 1.2 }]}>{t('planner6.week.actions')}</Text>
           <Text style={{ fontSize: 8, color: MUTED, lineHeight: 1.4, marginTop: 5, marginBottom: 6 }}>
             {t('planner6.week.status')}
           </Text>

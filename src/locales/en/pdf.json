@@ -104,7 +104,7 @@
       }
     },
     "footer": {
-      "title": "ReCalendar Planner 6.4",
+      "title": "ReCalendar Planner 6.5",
       "subtitle": "Open this PDF in the local ReCalendar fork to reuse its planner settings."
     },
     "log": {
@@ -155,15 +155,15 @@
       "focus": "Today's outcome",
       "plan": "PLAN",
       "actual": "ACTUAL",
-      "notes": "WORK NOTES",
-      "notes-hint": "Working notes, task breakdowns or a detailed log. Use only when needed."
+      "notes": "Notes",
+      "notes-hint": "Use only when needed."
     },
     "week": {
       "subtitle": "WEEK {{week}}  ·  Commitments and next actions",
       "outside": "Outside this planner",
       "outcomes": "Weekly focus",
       "actions": "Actions",
-      "status": "□ open   ✓ done\n→ moved   × cancelled"
+      "status": "□ open   ✓ done   → moved   × cancelled"
     },
     "review": {
       "subtitle": "WEEKLY REVIEW  ·  A sentence in each area is enough",
@@ -214,7 +214,7 @@
       },
       "day": {
         "title": "3  Plan on the left, record on the right",
-        "body": "Keep the original plan visible; record real start/end times and duration in Actual. Half-hour lines locate time, not text rows. Open Example for an interrupted day. Update the weekly task status separately."
+        "body": "Keep the original plan visible. In Actual, name the activity and write its start time; add end time and minutes when finished. Half-hour lines locate time, not text rows. Open Example for an interrupted day. Update the weekly task status separately."
       },
       "review": {
         "title": "4  Review at the right scale",
@@ -235,10 +235,10 @@
       "title": "A day in practice",
       "subtitle": "An interrupted morning, recorded once",
       "hint": "Illustrative example · 09:00–11:00 enlarged. The task is to complete exercises 1–6.",
-      "planned": "09:00–10:00\nMath · exercises 1–6\n60 min planned",
-      "first": "09:20–10:05\nMath · exercises 1–3\n45 min",
-      "call": "10:05–10:20 · Call · 15 min",
-      "second": "10:20–10:55\nMath · exercise 4\n35 min",
+      "planned": "Math · exercises 1–6\n09:00–10:00\n60 min planned",
+      "first": "Math · exercises 1–3\n09:20–10:05\n45 min",
+      "call": "Call · 10:05–10:20 · 15 min",
+      "second": "Math · exercise 4\n10:20–10:55\n35 min",
       "total": "Math: 45 + 35 = 80 min.  Call: 15 min.",
       "difference": "Start: 20 min late. Math took 20 min more than planned. The 95-minute elapsed window includes the call.",
       "task-title": "Update the action separately",
@@ -246,7 +246,7 @@
       "review-title": "Turn the difference into a decision",
       "review-body": "Weekly review: “Allow 80 min for similar work, with room for interruptions.” Monthly review: decide whether this learning direction still deserves the time.",
       "notes-title": "When a list is easier",
-      "notes-body": "Use dated Notes for start–end / minutes / activity. For example: 09:20–10:05 / 45 min / Math. Choose this list or detailed timeline entries; avoid copying both. Index only notes you expect to revisit."
+      "notes-body": "Use dated Notes for Activity / Start / End / Minutes. Write the activity and start time when beginning; add the end time and minutes when finished. Example: Math / 09:20 / 10:05 / 45 min. Choose this list or detailed timeline entries; avoid copying both."
     }
   }
 }

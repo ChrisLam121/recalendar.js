@@ -11,8 +11,8 @@ It is the continuation of my previous efforts: https://github.com/klimeryk/recal
 
 This fork includes a handwriting workflow for reMarkable Paper Pro: paired daily
 Plan / Actual timelines, linked daily notes, weekly actions, monthly direction
-and weekly/monthly reviews. Version 6.4 adds a 16-action weekly layout, a four-row
-monthly notes index, two Inbox pages and a worked example. Enable **Planner 6.4** in General settings, or
+and weekly/monthly reviews. Version 6.5 provides a 19-action weekly layout, a four-row
+monthly notes index, two Inbox pages and a worked example. Enable **Planner 6.5** in General settings, or
 regenerate an existing planner locally:
 
 ```sh

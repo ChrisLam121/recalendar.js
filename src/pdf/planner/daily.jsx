@@ -23,10 +23,21 @@ const styles = StyleSheet.create({
   number: { fontSize: 46, lineHeight: 1, fontWeight: 'bold', color: INK, width: 65, flexShrink: 0 },
   month: { fontSize: 13, fontWeight: 'bold', color: INK },
   weekday: { fontSize: 11, color: MUTED, marginTop: 5 },
-  focus: { width: '45%', marginLeft: 'auto', height: 50 },
-  focusTitle: { fontSize: 9, color: MUTED, marginBottom: 2 },
+  // The right-hand focus also uses the space beside the holiday label below.
+  focus: { position: 'absolute', right: 0, top: 0, width: '45%' },
+  focusTitle: { fontSize: 9, color: MUTED, lineHeight: 1.2, marginBottom: 2 },
   focusLine: { height: WRITING_PITCH, borderBottom: '0.4 solid #B4B4B4' },
-  occasion: { height: 26, fontSize: 8.5, lineHeight: 1.25, color: MUTED, maxLines: 2, textOverflow: 'ellipsis' },
+  notesLabel: { position: 'absolute', right: 0, top: 11, width: '45%', alignItems: 'flex-end' },
+  occasion: {
+    width: '55%',
+    paddingRight: 8,
+    height: 26,
+    fontSize: 8.5,
+    lineHeight: 1.25,
+    color: MUTED,
+    maxLines: 2,
+    textOverflow: 'ellipsis',
+  },
   columns: { height: 22, flexDirection: 'row', alignItems: 'center' },
   columnLabel: { fontSize: 11, fontWeight: 'bold', color: INK },
 });
@@ -40,16 +51,19 @@ function DateHeading({ date, config, notes = false }) {
         <Text style={styles.month}>{date.format('MMMM YYYY')}</Text>
         <Text style={styles.weekday}>{date.format('dddd')}</Text>
       </View>
-      <View style={styles.focus}>
-        {notes ? (
-          <Text style={[shared.label, { marginTop: 12 }]}>{t('planner6.daily.notes')}</Text>
-        ) : (
-          <>
-            <Text style={styles.focusTitle}>{t('planner6.daily.focus')}</Text>
-            <View style={styles.focusLine} />
-          </>
-        )}
-      </View>
+      {notes ? (
+        <View style={styles.notesLabel}>
+          <Text style={shared.label}>{t('planner6.daily.notes')}</Text>
+          <Text style={[shared.hint, { marginTop: 6 }]}>{t('planner6.daily.notes-hint')}</Text>
+        </View>
+      ) : (
+        <View style={styles.focus}>
+          <Text style={styles.focusTitle}>{t('planner6.daily.focus')}</Text>
+          {[0, 1, 2].map((row) => (
+            <View key={row} style={styles.focusLine} />
+          ))}
+        </View>
+      )}
     </View>
   );
 }
@@ -121,7 +135,6 @@ function Timeline({ config }) {
 Timeline.propTypes = { config: PropTypes.instanceOf(PdfConfig) };
 
 export default function PlannerDay({ config, date }) {
-  const { t } = useTranslation('pdf');
   if (!config.dayItineraries.find((day) => day.dayOfWeek === date.day())?.isEnabled) {
     return null;
   }
@@ -159,7 +172,6 @@ export default function PlannerDay({ config, date }) {
         {occasions.length > 0 && (
           <Text style={[shared.hint, { marginBottom: 10 }]}>{occasions.map(({ value }) => value).join(' / ')}</Text>
         )}
-        <Text style={[shared.hint, { marginBottom: 6 }]}>{t('planner6.daily.notes-hint')}</Text>
         <View style={{ flex: 1 }}>
           <Writing dots />
         </View>

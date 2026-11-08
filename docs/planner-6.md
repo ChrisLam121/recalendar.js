@@ -1,7 +1,7 @@
 # Planner 6: Plan / Actual
 
 Planner 6 is an optional handwriting workflow designed around the portrait
-reMarkable Paper Pro page. Enable **Planner 6.4** in General settings or use the
+reMarkable Paper Pro page. Enable **Planner 6.5** in General settings or use the
 local generator below. Disabling it retains the classic ReCalendar itinerary
 layout. The public upstream website does not include this fork's changes.
 
@@ -12,9 +12,9 @@ layout. The public upstream website does not include this fork's changes.
 | Home | Date index, month links, weekly plans (W), reviews (R), and year notes |
 | Month | Fixed commitments, deadlines and milestones |
 | Monthly direction & review | Intended outcomes, actual progress, one adjustment, selective notes index |
-| Week | Seven chronological day rows with two writing lines each; a weekly focus and 16-action list |
-| Day | Plan and Actual share one time axis; one 8.5 mm row identifies today's outcome |
-| Daily Notes | Optional working notes, task breakdown or detailed time log |
+| Week | Seven chronological day rows with two writing lines each; a weekly focus and 19-action list |
+| Day | Plan and Actual share one time axis; three 8.5 mm rows identify today's outcome |
+| Daily Notes | Free writing: notes, thoughts, a journal or an optional detailed time log |
 | Weekly review | Progress, one plan/actual difference, one change and decisions on unfinished work |
 | Habits | Existing habit names, a handwritten frequency goal, observations and one adjustment |
 | Inbox | Two linked capture pages, 20 items each; mark the destination when moving an item |
@@ -51,8 +51,8 @@ this choice does not promise identical pixels in every viewing mode or zoom.
 This is a design choice for this owner, not a universal handwriting standard.
 
 Weekly actions and Inbox use 4 × 4 mm checkboxes with a 3 mm gap before the writing
-line. On Paper Pro these rows yield sixteen weekly actions and twenty Inbox
-rows per page (two pages). Daily focus is one 8.5 mm row. The 06:00–22:00 timeline keeps the full day:
+line. On Paper Pro these rows yield nineteen weekly actions and twenty Inbox
+rows per page (two pages). Daily focus has three 8.5 mm rows. The 06:00–22:00 timeline keeps the full day:
 hourly rules (about 10.9 mm apart) use 0.6 pt #999999 strokes; full-width
 half-hour guides use thinner 0.4 pt #D0D0D0 strokes. Both stop at the centre
 time axis. Half-hour spacing is about 5.4 mm; handwriting can span more than
@@ -69,7 +69,7 @@ use a lighter grey than the actual date numbers, with their existing destination
 The weekly layout gives 60% of the width to seven chronological day rows and
 40% to the task list. Day rows hold commitments; the task list owns completion
 status. Each date retains two 8.5 mm writing lines. The action list provides
-16 rows on Paper Pro; longer actions can use two rows. Plan and Actual retain
+19 rows on Paper Pro; longer actions can use two rows. Plan and Actual retain
 their original dimensions and calibrated writing guides.
 
 Weekly and monthly review headings are shorter, with full instructions in Guide.
@@ -89,6 +89,22 @@ example: 60 minutes planned, two math blocks totalling 80 minutes and a 15-minut
 interruption. It distinguishes time spent from task completion and demonstrates
 how the record informs weekly and monthly review. A detailed list in Notes is
 an alternative to detailed timeline entries, not a second mandatory record.
+
+## Refinements in 6.5
+
+The weekly status legend fits on one line at 8 pt. A smaller gap after Weekly
+focus and a calculation from the remaining height give 19 action rows on Paper
+Pro, without reducing the 8.5 mm pitch or the 4 mm checkboxes.
+
+Today’s outcome has three 8.5 mm rows. Its right-hand area extends alongside the
+holiday band; holiday labels use the left 55% of the page body. The timeline
+position and height stay the same. Daily Notes uses a small, right-aligned
+“Notes” label in the date header and only “Use only when needed.” underneath.
+The dot grid starts below the header, with no list of prescribed writing uses.
+
+The example uses Activity / Start / End / Minutes. Record the activity and start
+when beginning, and complete the last two fields after finishing. The illustrated
+time blocks likewise put the activity first.
 
 ## Generate from an existing planner
 
