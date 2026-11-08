@@ -1,7 +1,7 @@
 # Planner 6: Plan / Actual
 
 Planner 6 is an optional handwriting workflow designed around the portrait
-reMarkable Paper Pro page. Enable **Planner 6.2** in General settings or use the
+reMarkable Paper Pro page. Enable **Planner 6.3** in General settings or use the
 local generator below. Disabling it retains the classic ReCalendar itinerary
 layout. The public upstream website does not include this fork's changes.
 
@@ -38,17 +38,17 @@ arrows each stay with their own page type. Swiping follows physical PDF order.
 The PDF cannot synchronize handwriting, automatically calculate duration or
 provide a dynamic Today button. Device favourites can provide a personal shortcut.
 
-## Mixed Chinese/English handwriting (6.2)
+## Mixed Chinese/English handwriting (6.3)
 
 Use the same writing area for both languages. The main ruled baseline is 8.5 mm,
 chosen from the owner's actual handwriting experience. Dot grids are 4.25 mm in
 both directions: two intervals give the same 8.5 mm writing rhythm, while a single
-interval remains useful for alignment. Each dot is a 0.22 mm dark-grey (#404040) vector
-circle. The smaller diameter responds to feedback that the 6.1 black dots were
-too visually dominant, taking the finer official reMarkable template as a
-visual reference. The screenshots do not establish the official template's
-physical dimensions. This is a design choice for this owner, not a universal
-handwriting standard.
+interval remains useful for alignment. Each dot is a 0.28 mm pure-black (#000000) vector
+circle, selected by the owner after on-device calibration in Adaptive mode
+on reMarkable OS 3.28.0.172. Keep the colour black and use the small diameter
+to control visual weight. Fine dots can still vary after PDF rasterization;
+this choice does not promise identical pixels in every viewing mode or zoom.
+This is a design choice for this owner, not a universal handwriting standard.
 
 Weekly actions and Inbox use 4 × 4 mm checkboxes with a 3 mm gap before the writing
 line. On Paper Pro the wider rows yield four weekly actions and twenty Inbox
