@@ -10,7 +10,8 @@ export const LIGHT_RULE = '#D6D6D6';
 export const mm = (value) => (value * 72) / 25.4;
 export const WRITING_PITCH = mm(8.5);
 export const DOT_PITCH = WRITING_PITCH / 2;
-export const DOT_RADIUS = mm(0.45) / 2;
+export const DOT_RADIUS = mm(0.22) / 2;
+export const DOT_INK = '#404040';
 export const CHECKBOX_SIZE = mm(4);
 
 export function plannerArea(config) {

@@ -78,14 +78,14 @@ function Timeline({ config }) {
       .stroke();
     for (let i = 0; i <= slots; i++) {
       const y = i * pitch;
-      // Half-hour marks locate time without imposing a 5.4 mm handwriting row.
+      // Lighter full-width half-hour guides preserve the stronger hourly rhythm.
       const halfHour = i % 2 !== 0;
-      painter.lineWidth(halfHour ? 0.5 : 0.6).strokeColor(halfHour ? '#AAAAAA' : '#999999');
+      painter.lineWidth(halfHour ? 0.4 : 0.6).strokeColor(halfHour ? '#D0D0D0' : '#999999');
       painter
-        .moveTo(halfHour ? lane - 10 : 0, y)
+        .moveTo(0, y)
         .lineTo(lane - 4, y)
         .moveTo(lane + axis + 4, y)
-        .lineTo(halfHour ? lane + axis + 10 : width, y)
+        .lineTo(width, y)
         .stroke();
     }
   }

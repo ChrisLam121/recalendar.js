@@ -9,6 +9,7 @@ import { pageStyle } from '~/pdf/styles';
 
 import {
   CHECKBOX_SIZE,
+  DOT_INK,
   DOT_PITCH,
   DOT_RADIUS,
   HEADER_HEIGHT,
@@ -133,7 +134,7 @@ Sheet.propTypes = {
 export function Writing({ dots = false, pitch = dots ? DOT_PITCH : WRITING_PITCH, inset = 0 }) {
   function paint(painter, width, height) {
     if (dots) {
-      painter.fillColor('#000000');
+      painter.fillColor(DOT_INK);
       for (let y = pitch / 2; y < height - DOT_RADIUS; y += pitch) {
         for (let x = inset + pitch / 2; x < width - DOT_RADIUS; x += pitch) {
           painter.circle(x, y, DOT_RADIUS);
