@@ -15,7 +15,7 @@ import {
 } from '~/pdf/lib/links';
 import { isRedDay } from '~/pdf/utils';
 
-import { INK, MUTED, plannerArea, plannerHours } from './geometry';
+import { INK, MUTED, plannerArea, plannerHours, WRITING_PITCH } from './geometry';
 import { Sheet, styles as shared, Writing } from './layout';
 
 const styles = StyleSheet.create({
@@ -25,7 +25,7 @@ const styles = StyleSheet.create({
   weekday: { fontSize: 11, color: MUTED, marginTop: 5 },
   focus: { width: '45%', marginLeft: 'auto', height: 50 },
   focusTitle: { fontSize: 9, color: MUTED, marginBottom: 2 },
-  focusLine: { height: 17, borderBottom: '0.4 solid #B4B4B4' },
+  focusLine: { height: WRITING_PITCH, borderBottom: '0.4 solid #B4B4B4' },
   occasion: { height: 26, fontSize: 8.5, lineHeight: 1.25, color: MUTED, maxLines: 2, textOverflow: 'ellipsis' },
   columns: { height: 22, flexDirection: 'row', alignItems: 'center' },
   columnLabel: { fontSize: 11, fontWeight: 'bold', color: INK },
@@ -46,7 +46,6 @@ function DateHeading({ date, config, notes = false }) {
         ) : (
           <>
             <Text style={styles.focusTitle}>{t('planner6.daily.focus')}</Text>
-            <View style={styles.focusLine} />
             <View style={styles.focusLine} />
           </>
         )}
@@ -79,12 +78,14 @@ function Timeline({ config }) {
       .stroke();
     for (let i = 0; i <= slots; i++) {
       const y = i * pitch;
-      painter.lineWidth(i % 2 ? 0.3 : 0.5).strokeColor(i % 2 ? '#D6D6D6' : '#AAAAAA');
+      // Half-hour marks locate time without imposing a 5.4 mm handwriting row.
+      const halfHour = i % 2 !== 0;
+      painter.lineWidth(halfHour ? 0.5 : 0.6).strokeColor(halfHour ? '#AAAAAA' : '#999999');
       painter
-        .moveTo(0, y)
+        .moveTo(halfHour ? lane - 10 : 0, y)
         .lineTo(lane - 4, y)
         .moveTo(lane + axis + 4, y)
-        .lineTo(width, y)
+        .lineTo(halfHour ? lane + axis + 10 : width, y)
         .stroke();
     }
   }

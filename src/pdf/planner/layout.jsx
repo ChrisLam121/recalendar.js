@@ -7,7 +7,19 @@ import PdfConfig from '~/pdf/config';
 import { PLANNER_INBOX, yearOverviewLink } from '~/pdf/lib/links';
 import { pageStyle } from '~/pdf/styles';
 
-import { HEADER_HEIGHT, INK, LIGHT_RULE, MARGIN, MUTED, RULE } from './geometry';
+import {
+  CHECKBOX_SIZE,
+  DOT_PITCH,
+  DOT_RADIUS,
+  HEADER_HEIGHT,
+  INK,
+  LIGHT_RULE,
+  MARGIN,
+  MUTED,
+  mm,
+  RULE,
+  WRITING_PITCH,
+} from './geometry';
 
 export const styles = StyleSheet.create({
   nav: { height: 30, flexDirection: 'row', alignItems: 'center', borderBottom: '0.5 solid #C8C8C8' },
@@ -118,13 +130,13 @@ Sheet.propTypes = {
   headerHeight: PropTypes.number,
 };
 
-export function Writing({ dots = false, pitch = 18, inset = 0 }) {
+export function Writing({ dots = false, pitch = dots ? DOT_PITCH : WRITING_PITCH, inset = 0 }) {
   function paint(painter, width, height) {
     if (dots) {
-      painter.fillColor('#999999');
-      for (let y = pitch / 2; y < height - 2; y += pitch) {
-        for (let x = inset + 1; x < width - 2; x += pitch) {
-          painter.circle(x, y, 0.35);
+      painter.fillColor('#000000');
+      for (let y = pitch / 2; y < height - DOT_RADIUS; y += pitch) {
+        for (let x = inset + pitch / 2; x < width - DOT_RADIUS; x += pitch) {
+          painter.circle(x, y, DOT_RADIUS);
         }
       }
       painter.fill();
@@ -155,13 +167,14 @@ export function Prompt({ title, hint, weight = 1, dots = false }) {
 
 Prompt.propTypes = { title: PropTypes.string, hint: PropTypes.string, weight: PropTypes.number, dots: PropTypes.bool };
 
-export function CheckLines({ count = 8, pitch = 20 }) {
+export function CheckLines({ count = 8, pitch = WRITING_PITCH }) {
   return (
     <View>
       {Array.from({ length: count }, (_, i) => (
         // biome-ignore lint/suspicious/noArrayIndexKey: fixed writing rows
-        <View key={i} style={{ height: pitch, borderBottom: '0.4 solid ' + RULE, justifyContent: 'center' }}>
-          <View style={{ width: 4.5, height: 4.5, border: '0.5 solid #888' }} />
+        <View key={i} style={{ height: pitch, flexDirection: 'row', alignItems: 'center' }}>
+          <View style={{ width: CHECKBOX_SIZE, height: CHECKBOX_SIZE, border: '0.7 solid #505050' }} />
+          <View style={{ flex: 1, height: '100%', marginLeft: mm(3), borderBottom: '0.4 solid ' + RULE }} />
         </View>
       ))}
     </View>

@@ -6,7 +6,7 @@ import { useTranslation } from 'react-i18next';
 import PdfConfig from '~/pdf/config';
 import { PLANNER_INBOX, PLANNER_MANUAL, PLANNER_TIME_LOG, yearNotesLink } from '~/pdf/lib/links';
 
-import { INK, plannerArea } from './geometry';
+import { INK, plannerArea, WRITING_PITCH } from './geometry';
 import { CheckLines, Sheet, styles, Writing } from './layout';
 
 export function PlannerYearNotes({ config, date }) {
@@ -47,7 +47,7 @@ export default function PlannerAppendix6({ config }) {
       >
         <Text style={[styles.hint, { marginBottom: 14 }]}>{t('planner6.inbox.hint')}</Text>
         <Text style={[styles.hint, { marginBottom: 6 }]}>{t('planner6.inbox.legend')}</Text>
-        <CheckLines count={Math.max(1, Math.floor((plannerArea(config).height - 70) / 24))} pitch={24} />
+        <CheckLines count={Math.max(1, Math.floor((plannerArea(config).height - 60) / WRITING_PITCH))} />
       </Sheet>
       <Sheet
         config={config}

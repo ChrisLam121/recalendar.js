@@ -7,6 +7,11 @@ export const INK = '#252525';
 export const MUTED = '#626262';
 export const RULE = '#B4B4B4';
 export const LIGHT_RULE = '#D6D6D6';
+export const mm = (value) => (value * 72) / 25.4;
+export const WRITING_PITCH = mm(8.5);
+export const DOT_PITCH = WRITING_PITCH / 2;
+export const DOT_RADIUS = mm(0.45) / 2;
+export const CHECKBOX_SIZE = mm(4);
 
 export function plannerArea(config) {
   const [pageWidth, pageHeight] = getPageSizeInPoints(config);

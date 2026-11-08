@@ -28,6 +28,9 @@ function IndexMonth({ date, config, width }) {
   const side = 15;
   const dayWidth = (width - side * 2) / 7;
   const cell = { width: dayWidth, textAlign: 'center', height: 12.5, fontSize: 9, textDecoration: 'none', color: INK };
+  const navigationCell = { ...cell, width: side, color: '#888888' };
+  const weekCell = { ...navigationCell, borderRight: '0.6 solid #AAAAAA' };
+  const reviewCell = { ...navigationCell, borderLeft: '0.6 solid #AAAAAA' };
   const month = monthOverviewLink(date, config);
   const year = config.isYearNotesEnabled && yearNotesLink(date);
   return (
@@ -47,23 +50,20 @@ function IndexMonth({ date, config, width }) {
         </Link>
       </View>
       <View style={{ flexDirection: 'row', borderBottom: '0.5 solid #999' }}>
-        <Text style={{ ...cell, width: side, fontSize: 7.5 }}>W</Text>
+        <Text style={{ ...weekCell, fontSize: 7.5 }}>W</Text>
         {Array.from({ length: 7 }, (_, i) => first.add(i, 'day')).map((day) => (
           <Text key={day.day()} style={{ ...cell, fontSize: 7.5 }}>
             {day.format('dd')}
           </Text>
         ))}
-        <Text style={{ ...cell, width: side, fontSize: 7.5 }}>R</Text>
+        <Text style={{ ...reviewCell, fontSize: 7.5 }}>R</Text>
       </View>
       {weeks.map((week) => {
         const weekTarget = config.isWeekOverviewEnabled && weekOverviewLink(week, config);
         const review = weekRetrospectiveLink(week, config);
         return (
           <View key={week.unix()} style={{ flexDirection: 'row' }}>
-            <Link
-              src={weekTarget ? '#' + weekTarget : undefined}
-              style={{ ...cell, width: side, fontSize: 8, color: MUTED }}
-            >
+            <Link src={weekTarget ? '#' + weekTarget : undefined} style={{ ...weekCell, fontSize: 8 }}>
               {getWeekNumber(week)}
             </Link>
             {Array.from({ length: 7 }, (_, i) => week.add(i, 'day')).map((day) => {
@@ -81,7 +81,7 @@ function IndexMonth({ date, config, width }) {
                 </Link>
               );
             })}
-            <Link src={review ? '#' + review : undefined} style={{ ...cell, width: side, color: MUTED }}>
+            <Link src={review ? '#' + review : undefined} style={reviewCell}>
               R
             </Link>
           </View>

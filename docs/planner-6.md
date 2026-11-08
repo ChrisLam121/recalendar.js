@@ -1,7 +1,7 @@
 # Planner 6: Plan / Actual
 
 Planner 6 is an optional handwriting workflow designed around the portrait
-reMarkable Paper Pro page. Enable **Planner 6.0** in General settings or use the
+reMarkable Paper Pro page. Enable **Planner 6.1** in General settings or use the
 local generator below. Disabling it retains the classic ReCalendar itinerary
 layout. The public upstream website does not include this fork's changes.
 
@@ -13,7 +13,7 @@ layout. The public upstream website does not include this fork's changes.
 | Month | Fixed commitments, deadlines and milestones |
 | Monthly direction & review | Intended outcomes, actual progress, one adjustment, selective notes index |
 | Week | Seven day boxes, a weekly outcome and the main action list |
-| Day | Plan and Actual share one time axis; two small lines identify today's outcomes |
+| Day | Plan and Actual share one time axis; one 8.5 mm row identifies today's outcome |
 | Daily Notes | Optional working notes, task breakdown or detailed time log |
 | Weekly review | Progress, one plan/actual difference, one change and decisions on unfinished work |
 | Habits | Existing habit names, a handwritten frequency goal, observations and one adjustment |
@@ -25,9 +25,9 @@ when the day changes, and record actual start/end times and duration on the
 right. A busy day's minimum is one outcome and one actual activity; the layout
 does not require filling every area or reconstructing missed days.
 
-The default timeline is 06:00–22:00 in half-hour intervals. Start and end can be
+The default timeline is 06:00–22:00 with hourly writing rows and half-hour ticks. Start and end can be
 changed in the form or CLI, using whole hours between 0 and 24. At the Paper Pro
-size this default gives about 5.4 mm per half-hour and 76 mm per writing column.
+size this default gives about 10.9 mm per hour and 76 mm per writing column.
 More hours reduce the row height. Rules are quiet grey; main text is dark and
 weekends/holidays retain red accents. Colour never carries the only meaning.
 
@@ -37,6 +37,26 @@ Weekly review has a separate **Next plan** link. The month, direction and habits
 arrows each stay with their own page type. Swiping follows physical PDF order.
 The PDF cannot synchronize handwriting, automatically calculate duration or
 provide a dynamic Today button. Device favourites can provide a personal shortcut.
+
+## Mixed Chinese/English handwriting (6.1)
+
+Use the same writing area for both languages. The main ruled baseline is 8.5 mm,
+chosen from the owner's actual handwriting experience. Dot grids are 4.25 mm in
+both directions: two intervals give the same 8.5 mm writing rhythm, while a single
+interval remains useful for alignment. Each dot is a 0.45 mm solid-black vector
+circle; this replaces the faint 0.247 mm grey dots. This is a design choice for
+this owner, not a universal handwriting standard.
+
+Weekly actions and Inbox use 4 × 4 mm checkboxes with a 3 mm gap before the writing
+line. On Paper Pro the wider rows yield four weekly actions and twenty Inbox
+rows. Daily focus is one 8.5 mm row. The 06:00–22:00 timeline keeps the full day:
+full-width lines are hourly (about 10.9 mm apart); half-hours are short ticks by
+the centre axis, not handwriting baselines. Month cells stay open, and the habit
+marking matrix and detailed log retain their purpose-specific cell dimensions.
+
+The Home index separates each month's weekday/date grid from the week-number
+and review columns with two continuous vertical rules. Week numbers and R links
+use a lighter grey than the actual date numbers, with their existing destinations.
 
 ## Generate from an existing planner
 

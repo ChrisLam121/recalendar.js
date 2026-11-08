@@ -8,7 +8,7 @@ import PdfConfig from '~/pdf/config';
 import { dayPageLink, weekMonthOverviewLink, weekOverviewLink, weekRetrospectiveLink } from '~/pdf/lib/links';
 import { isRedDay } from '~/pdf/utils';
 
-import { INK, MUTED, plannerArea, weekRange } from './geometry';
+import { INK, MUTED, plannerArea, WRITING_PITCH, weekRange } from './geometry';
 import { CheckLines, Prompt, Sheet, styles, Writing } from './layout';
 
 export function PlannerWeek({ date, config }) {
@@ -58,14 +58,14 @@ export function PlannerWeek({ date, config }) {
         })}
         <View style={{ width: '66.6666%', height: rowHeight, padding: '8 10', borderBottom: '0.5 solid #B4B4B4' }}>
           <Text style={styles.label}>{t('planner6.week.outcomes')}</Text>
-          <View style={{ height: 21, marginBottom: 5 }}>
-            <Writing pitch={18} />
+          <View style={{ height: WRITING_PITCH + 3, marginBottom: 5 }}>
+            <Writing />
           </View>
           <View style={{ flexDirection: 'row', alignItems: 'baseline' }}>
             <Text style={styles.label}>{t('planner6.week.actions')}</Text>
             <Text style={{ fontSize: 8, color: MUTED, marginLeft: 'auto' }}>{t('planner6.week.status')}</Text>
           </View>
-          <CheckLines count={Math.max(2, Math.floor((rowHeight - 64) / 18))} pitch={18} />
+          <CheckLines count={Math.max(1, Math.floor((rowHeight - 70) / WRITING_PITCH))} />
         </View>
       </View>
     </Sheet>
