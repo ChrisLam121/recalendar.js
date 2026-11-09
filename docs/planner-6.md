@@ -1,7 +1,7 @@
 # Planner 6: Plan / Actual
 
 Planner 6 is an optional handwriting workflow designed around the portrait
-reMarkable Paper Pro page. Enable **Planner 6.6** in General settings or use the
+reMarkable Paper Pro page. Enable **Planner 6.7** in General settings or use the
 local generator below. Disabling it retains the classic ReCalendar itinerary
 layout. The public upstream website does not include this fork's changes.
 
@@ -113,6 +113,13 @@ annually repeating birthdays and events tied to a specific year. The square
 is separate from date colour: a weekend or holiday event retains its red
 numeral. Adjacent-month dates retain their muted numeral. The marker leaves
 the numeral position and the full date link unchanged.
+
+## Direct Habits navigation in 6.7
+
+Every daily Schedule and Notes page has a Habits link to the same month.
+Each date/weekday header in Habits links directly to that date’s Schedule;
+the full 28 pt header height is tappable, while the tracking cells below
+remain writing areas. Dates whose daily page is disabled have no day link.
 
 ## Generate from an existing planner
 

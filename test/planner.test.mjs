@@ -140,6 +140,9 @@ test('generated preview has event boxes, complete navigation, reciprocal Notes a
       const date = String(day).padStart(2, '0') + '012027';
       assert.ok(targets(getPage('day-' + date)).includes('notes-' + date));
       assert.ok(targets(getPage('notes-' + date)).includes('day-' + date));
+      assert.ok(targets(getPage('day-' + date)).includes('habits-012027'));
+      assert.ok(targets(getPage('notes-' + date)).includes('habits-012027'));
+      assert.ok(targets(getPage('habits-012027')).includes('day-' + date));
       if (day < 31) {
         const next = String(day + 1).padStart(2, '0') + '012027';
         assert.ok(targets(getPage('day-' + date)).includes('day-' + next));
@@ -154,6 +157,10 @@ test('generated preview has event boxes, complete navigation, reciprocal Notes a
     assert.ok(targets(getPage('week-retrospective-532026')).includes('week-overview-012027'));
     assert.equal(named.has('month-022027'), false);
     assert.equal(named.has('day-01022027'), false);
+    assert.deepEqual(
+      targets(getPage('habits-012027')).filter((target) => target.startsWith('day-')),
+      Array.from({ length: 31 }, (_, i) => 'day-' + String(i + 1).padStart(2, '0') + '012027'),
+    );
     const attachment = await getJsonAttachment(bytes, 'config.json');
     assert.equal(attachment.status, 'OK');
     assert.deepEqual(attachment.data.habits, config.habits);

@@ -8,6 +8,7 @@ import PdfConfig from '~/pdf/config';
 import {
   dailyNotesLink,
   dayPageLink,
+  habitTrackerLink,
   monthOverviewLink,
   nextDayPageLink,
   previousDayPageLink,
@@ -145,6 +146,7 @@ export default function PlannerDay({ config, date }) {
   const links = [
     [config.isMonthOverviewEnabled && monthOverviewLink(date, config), 'month'],
     [config.isWeekOverviewEnabled && weekOverviewLink(date, config), 'week'],
+    [habitTrackerLink(date, config), 'habits'],
   ];
   const occasions = config.specialDates.filter(findByDate(date.format(EXACT_DATE_FORMAT)));
   return (

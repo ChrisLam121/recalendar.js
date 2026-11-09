@@ -163,18 +163,30 @@ export function PlannerHabits({ date, config }) {
         <Text style={{ width: goalWidth, textAlign: 'center', fontSize: 8, color: MUTED }}>
           {t('planner6.habits.goal')}
         </Text>
-        {days.map((day) => (
-          <View
-            key={day.date()}
-            style={[
-              { width: cellWidth, alignItems: 'center' },
-              day.day() === config.firstDayOfWeek && day.date() > 1 && { borderLeft: '0.7 solid #888' },
-            ]}
-          >
-            <Text style={{ fontSize: 8, color: isRedDay(day, config) ? '#B31B1B' : INK }}>{day.date()}</Text>
-            <Text style={{ fontSize: 7, color: MUTED, marginTop: 3 }}>{day.format('dd')}</Text>
-          </View>
-        ))}
+        {days.map((day) => {
+          const enabled = config.dayItineraries.some(
+            ({ dayOfWeek, isEnabled }) => dayOfWeek === day.day() && isEnabled,
+          );
+          // A date without a Schedule must not silently jump to a different day.
+          const target = enabled && dayPageLink(day, config);
+          return (
+            <Link
+              key={day.date()}
+              src={target ? '#' + target : undefined}
+              style={{ width: cellWidth, height: 28, justifyContent: 'center', textDecoration: 'none' }}
+            >
+              <View
+                style={[
+                  { alignItems: 'center' },
+                  day.day() === config.firstDayOfWeek && day.date() > 1 && { borderLeft: '0.7 solid #888' },
+                ]}
+              >
+                <Text style={{ fontSize: 8, color: isRedDay(day, config) ? '#B31B1B' : INK }}>{day.date()}</Text>
+                <Text style={{ fontSize: 7, color: MUTED, marginTop: 3 }}>{day.format('dd')}</Text>
+              </View>
+            </Link>
+          );
+        })}
       </View>
       {config.habits.map(({ id, value }) => (
         <View key={id} style={{ flexDirection: 'row' }}>
