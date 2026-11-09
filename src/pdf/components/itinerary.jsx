@@ -15,6 +15,7 @@ const PREFIX_COLOR = '#333';
 // See: https://regex101.com/r/FZ5T35/1
 const DATE_TEMPLATE_REGEX = /{{date(?::([^}]*?))?}}/g;
 const DEFAULT_DATE_FORMAT = 'L';
+const HOUR_LABEL = /^\s*(?:[01]\d|2[0-3]):00\s*$/;
 
 function applyDateTemplates(text, date) {
   return text.replaceAll(DATE_TEMPLATE_REGEX, (_match, format) => date.format(format || DEFAULT_DATE_FORMAT));
@@ -50,6 +51,16 @@ class Itinerary extends React.PureComponent {
     },
     indent: this.textStyle,
     text: { ...this.textStyle, flex: 1 },
+    timeRule: {
+      position: 'absolute',
+      left: 0,
+      right: 0,
+      top: 0,
+      borderTop: '0.6 solid #C4C4C4',
+    },
+    halfHourRule: {
+      borderTop: '0.45 solid #E2E2E2',
+    },
   });
 
   renderItineraryItem = (item, index) => {
@@ -58,19 +69,34 @@ class Itinerary extends React.PureComponent {
 
     switch (type) {
       case ITINERARY_ITEM:
-        return this.renderLine(value, prefix, index);
+        return this.renderLine(
+          value,
+          prefix,
+          index,
+          this.props.showTimeRules && HOUR_LABEL.test(value) ? 'hour' : null,
+        );
 
       case ITINERARY_LINES:
       default:
+        if (this.props.showTimeRules && value === 1) {
+          const previous = this.props.items[index - 1];
+          if (previous?.type === ITINERARY_ITEM && HOUR_LABEL.test(previous.value)) {
+            return this.renderLine('', prefix, index, 'half');
+          }
+        }
         return this.renderLines(value, prefix, index);
     }
   };
 
-  renderLine(text, prefix, key) {
+  renderLine(text, prefix, key, timeRule) {
     const [indent, content] = splitLeadingSpaces(applyDateTemplates(text, this.props.date));
     return (
       <View key={key} style={this.styles.line} wrap={false}>
-        <LineRule stroke={this.stroke} />
+        {timeRule ? (
+          <View style={[this.styles.timeRule, timeRule === 'half' && this.styles.halfHourRule]} />
+        ) : (
+          <LineRule stroke={this.stroke} />
+        )}
         <PrefixIcon prefix={prefix} size={this.prefixSize} color={PREFIX_COLOR} style={this.styles.prefix} />
         {indent.length > 0 && <Text style={this.styles.indent}>{indent}</Text>}
         <Text style={this.styles.text}>{content}</Text>
@@ -96,6 +122,7 @@ Itinerary.propTypes = {
   config: PropTypes.instanceOf(PdfConfig).isRequired,
   date: PropTypes.instanceOf(dayjs).isRequired,
   items: PropTypes.array.isRequired,
+  showTimeRules: PropTypes.bool,
 };
 
 export default Itinerary;

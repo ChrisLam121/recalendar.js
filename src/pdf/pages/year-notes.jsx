@@ -32,10 +32,15 @@ class YearNotesPage extends React.Component {
 
   render() {
     const { config, date } = this.props;
+    const pageId = yearNotesLink(date);
     const itemsByPage = splitItemsByPages(config.yearNotesItinerary);
     return (
       <>
-        <Page id={yearNotesLink(date)} size={getPageSizeInPoints(config)}>
+        <Page
+          id={pageId}
+          bookmark={config.isPlannerWorkflowEnabled ? date.format('YYYY') : undefined}
+          size={getPageSizeInPoints(config)}
+        >
           <View style={this.styles.page}>
             <Link src={'#' + yearOverviewLink()} style={this.styles.year}>
               {date.format('YYYY')}

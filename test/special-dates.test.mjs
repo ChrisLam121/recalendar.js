@@ -166,7 +166,7 @@ test('day, week overview and mini-calendar all use year-aware matching', async (
   ]) {
     const date = dayjs(key);
     const dayPage = new DayPage({ date, config }).render();
-    const header = dayPage.props.children[0].props.children.props.children[0];
+    const header = dayPage.props.children[0].props.children.props.children.find((child) => child?.props?.specialItems);
     assert.equal(header.props.specialItems.length, expectedCount);
     assert.equal(header.props.isRedDay, expectedRed);
     const weekDay = new Week.WrappedComponent({ date, config }).renderDay(date);
@@ -197,6 +197,7 @@ test('restored v4 birthdays and saved v5 exact dates retain their date scope', a
   } = await server.ssrLoadModule('/src/pdf/config.js');
   const legacy = { version: 'v4', ...range, specialDates: [{ date: '06-15', type: 'event', value: 'Birthday' }] };
   const restored = new PdfConfig(hydrateFromObject(convertConfigToCurrentVersion(structuredClone(legacy))));
+  assert.equal(restored.isPlannerWorkflowEnabled, false);
   assert.equal(restored.specialDates[0].date, '06-15');
   restored.specialDates.push({ date: '2027-06-09', type: 'holiday', value: 'Tuen Ng Festival' });
   const saved = JSON.parse(JSON.stringify({ version: CONFIG_CURRENT_VERSION, ...hydrateFromObject(restored) }));
@@ -205,6 +206,70 @@ test('restored v4 birthdays and saved v5 exact dates retain their date scope', a
   assert.equal(reloaded.specialDates.filter(findByDate('2027-06-15')).length, 1);
   assert.equal(reloaded.specialDates.filter(findByDate('2026-06-09')).length, 0);
   assert.equal(reloaded.specialDates.filter(findByDate('2027-06-09')).length, 1);
+
+  const nextEdition = new PdfConfig({ ...hydrateFromObject(reloaded), year: 2026, month: 5, monthCount: 1 });
+  const annualEvents = nextEdition.specialDates.filter(({ type }) => type !== 'holiday');
+  nextEdition.specialDates = [...annualEvents, ...importIcalDates(english, nextEdition, 'holiday', annualEvents)];
+  assert.deepEqual(nextEdition.specialDates.filter(findByDate('2026-06-15')), annualEvents);
+  assert.equal(nextEdition.specialDates.filter(findByDate('2026-06-19')).length, 1);
+  assert.equal(nextEdition.specialDates.filter(findByDate('2027-06-09')).length, 0);
+});
+
+test('planner workflow round-trips and limits day and notes links while retaining complete Sunday-start weeks', async () => {
+  const { default: PdfConfig, hydrateFromObject } = await server.ssrLoadModule('/src/pdf/config.js');
+  const { dailyNotesLink, dayPageLink, monthDashboardLink, nextDayPageLink, weekOverviewLink, weekRetrospectiveLink } =
+    await server.ssrLoadModule('/src/pdf/lib/links.js');
+  const restored = new PdfConfig(
+    JSON.parse(JSON.stringify(hydrateFromObject(new PdfConfig({ ...range, isPlannerWorkflowEnabled: true })))),
+  );
+  assert.equal(restored.isPlannerWorkflowEnabled, true);
+  const end = dayjs.utc('2027-12-31');
+  const out = end.add(1, 'day');
+  assert.equal(dayPageLink(dayjs.utc('2026-11-01'), restored), 'day-01112026');
+  assert.equal(dayPageLink(out, new PdfConfig(range)), 'day-01012028');
+  assert.equal(dayPageLink(out, restored), '');
+  assert.equal(dailyNotesLink(out, restored), '');
+  assert.equal(nextDayPageLink(end, restored), '');
+  assert.equal(dailyNotesLink(end, restored), 'notes-31122027');
+  assert.equal(monthDashboardLink(end, restored), 'dashboard-122027');
+  assert.equal(monthDashboardLink(out, restored), '');
+  assert.equal(weekOverviewLink(out, restored), 'week-overview-522027');
+  const newYear = dayjs.utc('2027-01-01');
+  assert.equal(weekOverviewLink(newYear, restored), 'week-overview-532026');
+  assert.equal(weekRetrospectiveLink(newYear, restored), 'week-retrospective-532026');
+  assert.equal(weekOverviewLink(newYear.add(2, 'day'), restored), 'week-overview-012027');
+});
+
+function collectCalendarLinks(node, targets = []) {
+  if (Array.isArray(node)) {
+    for (const child of node) {
+      collectCalendarLinks(child, targets);
+    }
+  } else if (node?.props) {
+    const { src, children } = node.props;
+    if (src?.startsWith('#')) {
+      targets.push(src.slice(1));
+    }
+    collectCalendarLinks(children, targets);
+  }
+  return targets;
+}
+
+test('date headings link each month in the range and keep the year linked to Home', async () => {
+  const { default: PdfConfig } = await server.ssrLoadModule('/src/pdf/config.js');
+  const { MonthYearLabel, WeekDateRange } = await server.ssrLoadModule('/src/pdf/components/calendar-date-label.jsx');
+  const config = new PdfConfig({ ...range, isPlannerWorkflowEnabled: true });
+  const weekLinks = (date) => collectCalendarLinks(WeekDateRange({ date: dayjs.utc(date), config }));
+  assert.deepEqual(weekLinks('2026-11-01'), ['month-112026', 'month-112026']);
+  assert.deepEqual(weekLinks('2026-12-27'), ['month-122026', 'month-012027']);
+  assert.deepEqual(weekLinks('2027-12-26'), ['month-122027']);
+
+  const yearLinks = () =>
+    collectCalendarLinks(MonthYearLabel({ date: dayjs.utc('2027-01-01'), config, color: 'black' }));
+  assert.deepEqual(yearLinks(), ['month-012027', 'year-overview']);
+  config.isMonthOverviewEnabled = false;
+  assert.deepEqual(weekLinks('2026-12-27'), []);
+  assert.deepEqual(yearLinks(), ['year-overview']);
 });
 
 test('mini calendar month and habit links respect the rendered preview range', async () => {
@@ -220,16 +285,36 @@ test('mini calendar month and habit links respect the rendered preview range', a
       showHabits: true,
       t: () => 'H',
     });
-    return calendar
-      .renderMonthName()
-      .props.children.filter((child) => child?.props?.src)
-      .map((child) => child.props.src);
+    return collectCalendarLinks(calendar.renderMonthName());
   };
 
-  assert.deepEqual(getHeaderLinks('2026-11-01'), ['#month-112026', '#year-overview', '#habits-112026']);
-  assert.deepEqual(getHeaderLinks('2026-12-01'), ['#year-overview']);
+  assert.deepEqual(getHeaderLinks('2026-11-01'), ['month-112026', 'year-overview', 'habits-112026']);
+  assert.deepEqual(getHeaderLinks('2026-12-01'), ['month-112026', 'year-overview']);
   config.isMonthOverviewEnabled = false;
-  assert.deepEqual(getHeaderLinks('2026-11-01'), ['#day-01112026', '#year-overview']);
+  assert.deepEqual(getHeaderLinks('2026-11-01'), ['day-01112026', 'year-overview']);
+});
+
+test('mini calendar destinations match rendered links and account for the cross-year week boundary', async () => {
+  const { default: PdfConfig } = await server.ssrLoadModule('/src/pdf/config.js');
+  const { default: MiniCalendar, getMiniCalendarDestinations } = await server.ssrLoadModule(
+    '/src/pdf/components/mini-calendar.jsx',
+  );
+  const config = new PdfConfig({ ...range, isPlannerWorkflowEnabled: true });
+  const date = dayjs.utc('2026-12-27');
+
+  for (const flags of [{}, { showHabits: false }, { showArrows: false }, { isOverview: true }]) {
+    const props = { date, config, ...flags };
+    const destinations = getMiniCalendarDestinations(props);
+    const calendar = new MiniCalendar.WrappedComponent({ ...props, t: (key) => key });
+    const actual = new Set(collectCalendarLinks(calendar.render()));
+    assert.deepEqual(destinations, actual);
+    assert.equal(destinations.has('year-overview'), true);
+    assert.equal(destinations.has('master-inbox'), true);
+    assert.equal(destinations.has('week-retrospective-532026'), true);
+    assert.equal(destinations.has('week-overview-012027'), false);
+    assert.equal(destinations.has('month-012027'), flags.showArrows !== false && !flags.isOverview);
+    assert.equal(destinations.has('habits-122026'), flags.showHabits !== false);
+  }
 });
 
 test('national-holiday API imports also keep years and filter to planner months', async () => {

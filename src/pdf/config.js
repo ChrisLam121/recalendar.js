@@ -24,6 +24,9 @@ const CONFIG_FIELDS = [
   'month',
   'firstDayOfWeek',
   'monthCount',
+  'isPlannerWorkflowEnabled',
+  'plannerStartHour',
+  'plannerEndHour',
   'weekendDays',
   'isLeftHanded',
   'sidebarPosition',
@@ -71,6 +74,9 @@ class PdfConfig {
     this.sidebarPosition = SIDEBAR_LEFT;
     this.sidebarOffset = 0;
     this.monthCount = 12;
+    this.isPlannerWorkflowEnabled = false;
+    this.plannerStartHour = 6;
+    this.plannerEndHour = 22;
     this.fontFamily = LATO;
     this.isYearNotesEnabled = true;
     this.yearNotesItinerary = [

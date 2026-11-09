@@ -5,8 +5,16 @@ import { withTranslation } from 'react-i18next';
 
 import { getWeekdays, getWeekNumber } from '~/lib/date';
 import { getPageSizeInPoints } from '~/lib/device-utils';
+import PlannerNavigation from '~/pdf/components/planner-navigation';
 import PdfConfig from '~/pdf/config';
-import { dayPageLink, monthOverviewLink, weekOverviewLink, yearOverviewLink } from '~/pdf/lib/links';
+import {
+  dayPageLink,
+  habitTrackerLink,
+  monthDashboardLink,
+  monthOverviewLink,
+  weekOverviewLink,
+  yearOverviewLink,
+} from '~/pdf/lib/links';
 import { pageStyle, redDayText } from '~/pdf/styles';
 import { isRedDay } from '~/pdf/utils';
 
@@ -94,6 +102,8 @@ const styles = StyleSheet.create({
 });
 
 function MonthOverviewPage({ date, config, t }) {
+  const pageId = monthOverviewLink(date, config);
+
   function renderMonthButton(offset) {
     const month = date.add(offset, 'month');
     const link = monthOverviewLink(month, config);
@@ -146,8 +156,22 @@ function MonthOverviewPage({ date, config, t }) {
   }
 
   return (
-    <Page id={monthOverviewLink(date, config)} size={getPageSizeInPoints(config)} wrap={false}>
+    <Page
+      id={pageId}
+      bookmark={config.isPlannerWorkflowEnabled ? date.format('MMMM YYYY') : undefined}
+      size={getPageSizeInPoints(config)}
+      wrap={false}
+    >
       <View style={pageStyle(config)}>
+        {config.isPlannerWorkflowEnabled && (
+          <PlannerNavigation
+            currentPage={pageId}
+            links={[
+              [habitTrackerLink(date, config), 'habits'],
+              [monthDashboardLink(date, config), 'dashboard'],
+            ]}
+          />
+        )}
         <View style={styles.body}>
           <View style={styles.heading}>
             <Link src={'#' + yearOverviewLink()} style={styles.title}>

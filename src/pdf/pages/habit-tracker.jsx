@@ -9,8 +9,9 @@ import { getPageSizeInPoints } from '~/lib/device-utils';
 import { getHorizontalSidebarOffset } from '~/lib/sidebar-utils';
 import Itinerary from '~/pdf/components/itinerary';
 import MiniCalendar, { HIGHLIGHT_NONE } from '~/pdf/components/mini-calendar';
+import PlannerNavigation from '~/pdf/components/planner-navigation';
 import PdfConfig from '~/pdf/config';
-import { dayPageLink, habitTrackerLink } from '~/pdf/lib/links';
+import { dayPageLink, habitTrackerLink, monthDashboardLink, monthOverviewLink } from '~/pdf/lib/links';
 import { pageStyle, redDayText } from '~/pdf/styles';
 import { isRedDay, splitItemsByPages } from '~/pdf/utils';
 
@@ -47,10 +48,14 @@ class HabitTrackerPage extends React.Component {
           flexGrow: 1,
           flexDirection: 'column',
           borderRight: '1 solid black',
+        },
+        month: {
+          flexGrow: 1,
           justifyContent: 'center',
         },
         title: {
           textTransform: 'uppercase',
+          textDecoration: 'none',
           color: 'black',
           padding: '10 5',
           fontSize: 35,
@@ -127,6 +132,10 @@ class HabitTrackerPage extends React.Component {
         weekendDay: {
           backgroundColor: '#EEE',
         },
+        reflection: { flexGrow: 1, margin: '20 20 16' },
+        reflectionTitle: { color: '#222', fontSize: 14, fontWeight: 'bold', marginBottom: 12 },
+        response: { flexGrow: 1, minHeight: 34 },
+        prompt: { fontSize: 11, color: '#444' },
       },
       { page: pageStyle(props.config) },
     );
@@ -209,7 +218,13 @@ class HabitTrackerPage extends React.Component {
       if (weekendDays.includes(currentDate.day())) {
         styles.push(this.styles.weekendDay);
       }
-      squares.push(<Link key={currentDate.date()} style={styles} src={'#' + dayPageLink(currentDate, config)} />);
+      squares.push(
+        config.isPlannerWorkflowEnabled ? (
+          <View key={currentDate.date()} style={styles} />
+        ) : (
+          <Link key={currentDate.date()} style={styles} src={'#' + dayPageLink(currentDate, config)} />
+        ),
+      );
       currentDate = currentDate.add(1, 'day');
     }
 
@@ -217,20 +232,50 @@ class HabitTrackerPage extends React.Component {
   }
 
   render() {
-    const { date, config } = this.props;
+    const { date, config, t } = this.props;
+    const pageId = habitTrackerLink(date, config);
+    const monthLink = monthOverviewLink(date, config);
     const itemsByPage = splitItemsByPages(config.monthItinerary);
+    const miniCalendar = { date, config, highlightMode: HIGHLIGHT_NONE, showHabits: false };
     return (
       <>
-        <Page id={habitTrackerLink(date, config)} size={getPageSizeInPoints(config)}>
+        <Page id={pageId} size={getPageSizeInPoints(config)}>
           <View style={this.styles.page}>
             <View style={this.styles.header}>
               <View style={this.styles.meta}>
-                <Text style={this.styles.title}>{date.format('MMMM')}</Text>
+                {config.isPlannerWorkflowEnabled && (
+                  <PlannerNavigation
+                    currentPage={pageId}
+                    miniCalendar={miniCalendar}
+                    links={[
+                      [monthLink, 'month'],
+                      [monthDashboardLink(date, config), 'dashboard'],
+                    ]}
+                  />
+                )}
+                <View style={this.styles.month}>
+                  <Link
+                    src={config.isPlannerWorkflowEnabled && monthLink ? '#' + monthLink : undefined}
+                    style={this.styles.title}
+                  >
+                    {date.format('MMMM')}
+                  </Link>
+                </View>
               </View>
-              <MiniCalendar date={date} highlightMode={HIGHLIGHT_NONE} config={config} showHabits={false} />
+              <MiniCalendar {...miniCalendar} />
             </View>
             {this.renderHabitsTable()}
             <View style={this.styles.content}>
+              {config.isPlannerWorkflowEnabled && (
+                <View style={this.styles.reflection}>
+                  <Text style={this.styles.reflectionTitle}>{t('planner.habits.reflect')}</Text>
+                  {['helped', 'obstacle', 'change'].map((prompt) => (
+                    <View key={prompt} style={this.styles.response}>
+                      <Text style={this.styles.prompt}>{t('planner.habits.' + prompt)}</Text>
+                    </View>
+                  ))}
+                </View>
+              )}
               <Itinerary date={date} items={itemsByPage[0]} config={config} />
             </View>
           </View>

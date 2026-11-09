@@ -11,11 +11,14 @@ import {
   HOLIDAY_DAY_TYPE,
   EXACT_DATE_FORMAT as SPECIAL_DATES_DATE_FORMAT,
 } from '~/lib/special-dates-utils';
+import { WeekDateRange } from '~/pdf/components/calendar-date-label';
 import Header from '~/pdf/components/header';
 import MiniCalendar, { HIGHLIGHT_WEEK } from '~/pdf/components/mini-calendar';
+import PlannerNavigation from '~/pdf/components/planner-navigation';
 import PdfConfig from '~/pdf/config';
-import { dayPageLink, weekOverviewLink } from '~/pdf/lib/links';
-import { content, pageStyle } from '~/pdf/styles';
+import { dayPageLink, weekMonthOverviewLink, weekOverviewLink, weekRetrospectiveLink } from '~/pdf/lib/links';
+import { content, pageStyle, sidebarPadding, WEEKLY_FOCUS_LINE_HEIGHT_PT } from '~/pdf/styles';
+import { isRenderedDay } from '~/pdf/utils';
 
 class WeekOverviewPage extends React.Component {
   styles = StyleSheet.create(
@@ -27,6 +30,12 @@ class WeekOverviewPage extends React.Component {
           flexGrow: 1,
           paddingTop: 1,
           paddingLeft: 1,
+        },
+        plannerDays: {
+          paddingTop: 0,
+          paddingLeft: 0,
+          borderTop: '1 solid black',
+          borderLeft: '1 solid black',
         },
         day: {
           width: '33.5%',
@@ -43,6 +52,14 @@ class WeekOverviewPage extends React.Component {
           flexDirection: 'row',
           flexGrow: 1,
           marginBottom: 2,
+        },
+        plannerDay: {
+          width: '33.3333%',
+          height: '33.3333%',
+          borderTopWidth: 0,
+          borderLeftWidth: 0,
+          marginTop: 0,
+          marginLeft: 0,
         },
         dayOfWeek: {
           fontSize: 12,
@@ -62,6 +79,25 @@ class WeekOverviewPage extends React.Component {
         todo: {
           fontSize: 10,
         },
+        plannerBox: {
+          borderColor: '#777',
+        },
+        boxTitle: {
+          marginBottom: 4,
+        },
+        boxHint: {
+          fontSize: 9,
+          color: '#666',
+        },
+        focusLine: {
+          height: WEEKLY_FOCUS_LINE_HEIGHT_PT,
+          flexShrink: 0,
+          marginHorizontal: 3,
+          color: '#666',
+          fontSize: 10,
+          paddingTop: 7,
+          borderBottom: '0.5 solid #BBB',
+        },
         specialItem: {
           fontSize: 10,
         },
@@ -69,13 +105,6 @@ class WeekOverviewPage extends React.Component {
       { content, page: pageStyle(this.props.config) },
     ),
   );
-
-  getNameOfWeek() {
-    const { date } = this.props;
-    const beginningOfWeek = date.startOf('week').format('DD MMMM');
-    const endOfWeek = date.endOf('week').format('DD MMMM');
-    return `${beginningOfWeek} - ${endOfWeek}`;
-  }
 
   renderDays() {
     const { date } = this.props;
@@ -87,6 +116,9 @@ class WeekOverviewPage extends React.Component {
       currentDate = currentDate.add(1, 'day');
     }
 
+    if (this.props.config.isPlannerWorkflowEnabled) {
+      days.push(this.renderFocus());
+    }
     days.push(this.renderTodos());
 
     return days;
@@ -96,7 +128,7 @@ class WeekOverviewPage extends React.Component {
     const { config } = this.props;
     const { isEnabled } = config.dayItineraries[day.weekday()];
     const specialDateKey = day.format(SPECIAL_DATES_DATE_FORMAT);
-    const specialItems = config.specialDates.filter(findByDate(specialDateKey));
+    const specialItems = isRenderedDay(day, config) ? config.specialDates.filter(findByDate(specialDateKey)) : [];
     const dayContent = (
       <View style={{ flexDirection: 'column' }}>
         <View style={this.styles.dayDate}>
@@ -114,25 +146,38 @@ class WeekOverviewPage extends React.Component {
       </View>
     );
 
-    if (!isEnabled) {
+    const link = isEnabled && dayPageLink(day, config);
+    const dayStyle = [this.styles.day, config.isPlannerWorkflowEnabled && this.styles.plannerDay];
+    if (!link) {
       return (
-        <View key={day.unix()} style={this.styles.day}>
+        <View key={day.unix()} style={dayStyle}>
           {dayContent}
         </View>
       );
     }
 
     return (
-      <Link key={day.unix()} style={this.styles.day} src={'#' + dayPageLink(day, config)}>
+      <Link key={day.unix()} style={dayStyle} src={'#' + link}>
         {dayContent}
       </Link>
     );
   }
 
   renderTodos() {
+    const { config, t } = this.props;
+    const workflow = config.isPlannerWorkflowEnabled;
     return (
-      <View key={'todos'} style={this.styles.todos}>
-        {this.props.config.todos.map(({ id, value }) => (
+      <View
+        key="todos"
+        style={workflow ? [this.styles.day, this.styles.plannerDay, this.styles.plannerBox] : this.styles.todos}
+      >
+        {workflow && (
+          <>
+            <Text style={[this.styles.dayOfWeek, this.styles.boxTitle]}>{t('planner.weekly.tasks')}</Text>
+            <Text style={this.styles.boxHint}>{t('planner.weekly.hint')}</Text>
+          </>
+        )}
+        {config.todos.map(({ id, value }) => (
           <Text key={id} style={this.styles.todo}>
             {value}
           </Text>
@@ -141,21 +186,64 @@ class WeekOverviewPage extends React.Component {
     );
   }
 
+  renderFocus() {
+    const { config, t } = this.props;
+    const [pageWidth, pageHeight] = getPageSizeInPoints(config);
+    const { paddingTop, paddingBottom, paddingLeft, paddingRight } = sidebarPadding(config);
+    const width = pageWidth - paddingLeft - paddingRight;
+    const height = pageHeight - paddingTop - paddingBottom;
+    // Leave room for the tallest mini-calendar header and keep the writing pitch fixed.
+    let lineCount = 3;
+    if (width >= 460 && height >= 672) {
+      lineCount = 6;
+    } else if (width >= 410 && height >= 610) {
+      lineCount = 5;
+    }
+    const lines = Array.from({ length: lineCount }, (_, index) => index + 1);
+
+    return (
+      <View key="focus" style={[this.styles.day, this.styles.plannerDay, this.styles.plannerBox]}>
+        <Text style={[this.styles.dayOfWeek, this.styles.boxTitle]}>{t('planner.weekly.focus')}</Text>
+        {lines.map((line) => (
+          <Text key={line} style={this.styles.focusLine}>
+            {line}
+          </Text>
+        ))}
+      </View>
+    );
+  }
+
   render() {
     const { t, date, config } = this.props;
+    const pageId = weekOverviewLink(date, config);
+    const miniCalendar = { date, config, highlightMode: HIGHLIGHT_WEEK };
     return (
-      <Page id={weekOverviewLink(date, config)} size={getPageSizeInPoints(config)}>
+      <Page id={pageId} size={getPageSizeInPoints(config)}>
         <View style={this.styles.page}>
           <Header
             isLeftHanded={config.isLeftHanded}
             title={t('page.week.title')}
-            subtitle={this.getNameOfWeek()}
+            subtitle={<WeekDateRange date={date} config={config} />}
             number={getWeekNumber(date).toString()}
             previousLink={weekOverviewLink(date.subtract(1, 'week'), config)}
             nextLink={weekOverviewLink(date.add(1, 'week'), config)}
-            calendar={<MiniCalendar date={date} highlightMode={HIGHLIGHT_WEEK} config={config} />}
+            calendar={<MiniCalendar {...miniCalendar} />}
+            navigation={
+              config.isPlannerWorkflowEnabled && (
+                <PlannerNavigation
+                  currentPage={pageId}
+                  miniCalendar={miniCalendar}
+                  links={[
+                    [weekMonthOverviewLink(date, config), 'month'],
+                    [weekRetrospectiveLink(date, config), 'review'],
+                  ]}
+                />
+              )
+            }
           />
-          <View style={this.styles.days}>{this.renderDays()}</View>
+          <View style={[this.styles.days, config.isPlannerWorkflowEnabled && this.styles.plannerDays]}>
+            {this.renderDays()}
+          </View>
         </View>
       </Page>
     );

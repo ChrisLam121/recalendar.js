@@ -38,14 +38,20 @@ class LastPage extends React.Component {
         <View style={this.styles.page}>
           <View style={this.styles.center}>
             <Text style={this.styles.title}>
-              <Trans
-                i18nKey="page.last.title"
-                components={{
-                  recalendar: <Link src="https://recalendar.me" />,
-                }}
-              />
+              {config.isPlannerWorkflowEnabled ? (
+                t('planner.footer.title')
+              ) : (
+                <Trans
+                  i18nKey="page.last.title"
+                  components={{
+                    recalendar: <Link src="https://recalendar.me" />,
+                  }}
+                />
+              )}
             </Text>
-            <Text style={this.styles.subtitle}>{t('page.last.subtitle')}</Text>
+            <Text style={this.styles.subtitle}>
+              {t(config.isPlannerWorkflowEnabled ? 'planner.footer.subtitle' : 'page.last.subtitle')}
+            </Text>
           </View>
         </View>
       </Page>

@@ -10,6 +10,7 @@ import Itinerary from '~/pdf/components/itinerary';
 import MiniCalendar from '~/pdf/components/mini-calendar';
 import PdfConfig from '~/pdf/config';
 import { dayPageLink, monthOverviewLink, nextDayPageLink, previousDayPageLink } from '~/pdf/lib/links';
+import DailyNotes from '~/pdf/pages/daily-notes';
 import { content, pageStyle } from '~/pdf/styles';
 import { isRedDay, splitItemsByPages } from '~/pdf/utils';
 
@@ -35,9 +36,12 @@ class DayPage extends React.Component {
     const specialDateKey = this.props.date.format(SPECIAL_DATES_DATE_FORMAT);
     const specialItems = this.props.config.specialDates.filter(findByDate(specialDateKey));
     const monthLink = monthOverviewLink(date, config);
+    const pageId = dayPageLink(date, config);
+    const workflow = config.isPlannerWorkflowEnabled;
+    const notesItems = itemsByPage[1] ?? [];
     return (
       <>
-        <Page id={dayPageLink(date, config)} size={getPageSizeInPoints(config)}>
+        <Page id={pageId} size={getPageSizeInPoints(config)}>
           <View style={this.styles.page}>
             <Header
               isLeftHanded={config.isLeftHanded}
@@ -52,11 +56,12 @@ class DayPage extends React.Component {
               specialItems={specialItems}
             />
             <View style={this.styles.content}>
-              <Itinerary date={date} items={itemsByPage[0]} config={config} />
+              <Itinerary date={date} items={itemsByPage[0]} config={config} showTimeRules={workflow} />
             </View>
           </View>
         </Page>
-        {itemsByPage.slice(1).map(this.renderExtraItems)}
+        {workflow && <DailyNotes date={date} items={notesItems} config={config} />}
+        {itemsByPage.slice(workflow ? 2 : 1).map(this.renderExtraItems)}
       </>
     );
   }

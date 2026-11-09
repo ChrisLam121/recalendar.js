@@ -67,6 +67,7 @@
       }
     },
     "general": {
+      "planner-workflow": "Planner 6.7 (Plan / Actual, weekly actions and reviews)",
       "label": "General options",
       "device": "Device",
       "dpi": "DPI",
@@ -137,7 +138,10 @@
           "label": "Protect the preview too",
           "description": "Keep this on to check that the password works before you put the calendar on your device. Turn it off if you are still tweaking things and do not want to retype the password into the PDF viewer on every preview."
         }
-      }
+      },
+      "planner-start": "Timeline starts at",
+      "planner-end": "Timeline ends at",
+      "planner-hint": "Whole hours, 0–24. Planner 6 uses structured pages; existing itinerary settings are retained for the classic layout."
     },
     "button": {
       "refresh": "Refresh preview",

@@ -1,7 +1,10 @@
 import { getWeekId } from '~/lib/date';
-import { isRendered, isRenderedMonth } from '~/pdf/utils';
+import { isRendered, isRenderedDay, isRenderedMonth } from '~/pdf/utils';
 
 export function dayPageLink(date, config) {
+  if (config.isPlannerWorkflowEnabled && !isRenderedDay(date, config)) {
+    return '';
+  }
   const dayLink = findEnabledDayPageLink(date, config, 1);
   if (dayLink) {
     return dayLink;
@@ -38,7 +41,7 @@ function findEnabledDayPageLink(date, config, step) {
       continue;
     }
 
-    if (!isRendered(date, config)) {
+    if (!isRenderedDay(date, config)) {
       return '';
     }
 
@@ -74,6 +77,28 @@ export function monthOverviewLink(date, config) {
 export function habitTrackerLink(date, config) {
   return config.isMonthOverviewEnabled && isRenderedMonth(date, config) ? 'habits-' + date.format('MMYYYY') : '';
 }
+
+export function monthDashboardLink(date, config) {
+  return config.isPlannerWorkflowEnabled && habitTrackerLink(date, config) ? 'dashboard-' + date.format('MMYYYY') : '';
+}
+
+export function weekMonthOverviewLink(week, config) {
+  if (!config.isMonthOverviewEnabled) {
+    return '';
+  }
+  return monthOverviewLink(week, config) || monthOverviewLink(week.endOf('week'), config);
+}
+
+export function dailyNotesLink(date, config) {
+  const enabled = config.dayItineraries.find(findDayOfWeek(date.day()))?.isEnabled;
+  return config.isPlannerWorkflowEnabled && enabled && isRenderedDay(date, config)
+    ? 'notes-' + date.format('DDMMYYYY')
+    : '';
+}
+
+export const PLANNER_INBOX = 'master-inbox';
+export const PLANNER_MANUAL = 'template-library';
+export const PLANNER_TIME_LOG = 'template-time-log';
 
 export function weekOverviewLink(date, config) {
   if (config.isWeekOverviewEnabled) {

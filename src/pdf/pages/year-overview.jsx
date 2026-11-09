@@ -2,12 +2,14 @@ import { Link, Page, StyleSheet, Text, View } from '@react-pdf/renderer';
 import dayjs from 'dayjs/esm';
 import PropTypes from 'prop-types';
 import React from 'react';
+import { withTranslation } from 'react-i18next';
 
 import { getPageSizeInPoints } from '~/lib/device-utils';
 import { getHorizontalSidebarOffset } from '~/lib/sidebar-utils';
 import MiniCalendar, { HIGHLIGHT_NONE, MINI_CALENDAR_WIDTH } from '~/pdf/components/mini-calendar';
+import PlannerNavigation from '~/pdf/components/planner-navigation';
 import PdfConfig from '~/pdf/config';
-import { yearNotesLink, yearOverviewLink } from '~/pdf/lib/links';
+import { PLANNER_MANUAL, yearNotesLink, yearOverviewLink } from '~/pdf/lib/links';
 import { sidebarPadding } from '~/pdf/styles';
 
 const PAGE_VERTICAL_MARGIN = 5;
@@ -66,6 +68,7 @@ class YearOverviewPage extends React.Component {
         marginLeft: calendarMargin,
         marginRight: calendarMargin,
       },
+      nav: { marginHorizontal: 12, paddingHorizontal: 0 },
     });
   }
 
@@ -119,7 +122,7 @@ class YearOverviewPage extends React.Component {
   }
 
   renderTitle() {
-    const { startDate, endDate } = this.props;
+    const { startDate, endDate, config } = this.props;
     if (this.isFullYear()) {
       return this.renderTitlePart(startDate.format('YYYY'), startDate, this.styles.year);
     }
@@ -128,17 +131,35 @@ class YearOverviewPage extends React.Component {
     return (
       <View style={this.styles.titleRange}>
         {this.renderTitlePart(startDate.format('MMMM YYYY'), startDate, this.styles.yearRange)}
-        <Text style={[this.styles.yearRange, this.styles.separator]}>-</Text>
-        {this.renderTitlePart(lastMonth.format('MMMM YYYY'), lastMonth, this.styles.yearRange)}
+        {(!config.isPlannerWorkflowEnabled || !lastMonth.isSame(startDate, 'month')) && (
+          <>
+            <Text style={[this.styles.yearRange, this.styles.separator]}>-</Text>
+            {this.renderTitlePart(lastMonth.format('MMMM YYYY'), lastMonth, this.styles.yearRange)}
+          </>
+        )}
       </View>
     );
   }
 
   render() {
-    const { config } = this.props;
+    const { config, startDate, t } = this.props;
+    const pageId = yearOverviewLink();
     return (
-      <Page size={getPageSizeInPoints(config)} style={this.styles.page}>
-        <View id={yearOverviewLink()}>{this.renderTitle()}</View>
+      <Page
+        size={getPageSizeInPoints(config)}
+        bookmark={config.isPlannerWorkflowEnabled ? t('planner.nav.home') : undefined}
+        style={this.styles.page}
+      >
+        <View id={pageId}>{this.renderTitle()}</View>
+        {config.isPlannerWorkflowEnabled && (
+          <PlannerNavigation
+            compact
+            currentPage={pageId}
+            miniCalendar={{ date: startDate, config, isOverview: true }}
+            links={[[PLANNER_MANUAL, 'manual']]}
+            style={this.styles.nav}
+          />
+        )}
         {this.renderCalendars()}
       </Page>
     );
@@ -149,6 +170,7 @@ YearOverviewPage.propTypes = {
   config: PropTypes.instanceOf(PdfConfig).isRequired,
   endDate: PropTypes.instanceOf(dayjs).isRequired,
   startDate: PropTypes.instanceOf(dayjs).isRequired,
+  t: PropTypes.func.isRequired,
 };
 
-export default YearOverviewPage;
+export default withTranslation('pdf')(YearOverviewPage);

@@ -7,6 +7,22 @@ It is the continuation of my previous efforts: https://github.com/klimeryk/recal
 
 ## Features
 
+### Planner 6: Plan / Actual
+
+This fork includes a handwriting workflow for reMarkable Paper Pro: paired daily
+Plan / Actual timelines, linked daily notes, weekly actions, monthly direction
+and weekly/monthly reviews. Version 6.7 provides a 19-action weekly layout, a four-row
+monthly notes index, two Inbox pages and a worked example. Enable **Planner 6.7** in General settings, or
+regenerate an existing planner locally:
+
+```sh
+npm run planner -- --input '/path/to/existing.pdf' --output '/path/to/planner-6.pdf'
+```
+
+See [the workflow and generation guide](docs/planner-6.md) for navigation, timeline
+hours, retained settings and validation. The classic itinerary layout remains
+available when Planner 6 is disabled.
+
 ### Year-aware calendar imports in this fork
 
 This fork fixes public holidays being copied onto the wrong dates in multi-year
